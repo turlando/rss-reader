@@ -1,0 +1,19 @@
+version: '3.7'
+
+services:
+
+    db:
+        image: postgres:13.1
+        ports:
+            - target: 5432
+              published: 5432
+              protocol: tcp
+              mode: host
+        volumes:
+            - type: bind
+              source: "./pgdata"
+              target: "/var/lib/postgresql/data"
+        environment:
+            POSTGRES_USER: rss-reader
+            POSTGRES_PASSWORD: changeme
+            POSTGRES_DB: rss-reader
