@@ -25,5 +25,7 @@
         "prepare": "npm run build",
         "start": "npm run build && node dist/index.js"
     },
-    "files": [ "dist" ]
+    "files": [
+        "dist"
+    ]
 }

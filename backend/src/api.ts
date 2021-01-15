@@ -6,12 +6,11 @@ import * as bcrypt from 'bcrypt'
 const BCRYPT_SALT_ROUNDS = 10
 
 
-export function addUser(connection: Connection,
-                        username: string,
-                        plaintextPassword: string) {
-    bcrypt.hash(plaintextPassword, BCRYPT_SALT_ROUNDS)
-          .then(hashedPassword => db.addUser(connection,
-                                             username, hashedPassword))
+export async function addUser(connection: Connection,
+                              username: string,
+                              plaintextPassword: string) {
+    const hashedPassword = await bcrypt.hash(plaintextPassword, BCRYPT_SALT_ROUNDS)
+    return db.addUser(connection, username, hashedPassword)
 }
 
 

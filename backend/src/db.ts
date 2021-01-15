@@ -15,8 +15,8 @@ const DEFAULT_USER = 'rss-reader'
 const DEFAULT_PASS = 'changeme'
 const DEFAULT_DB   = 'rss-reader'
 
-const SESSION_VALIDITY_IN_HOURS = 24 * 7
 
+/* User **********************************************************************/
 
 export function makeConnection(): Connection {
     return new Pool({
@@ -38,6 +38,8 @@ export async function initialize(connection: Connection) {
     })
 }
 
+
+/* User **********************************************************************/
 
 export function addUser(connection: Connection,
                         username: string,
@@ -62,6 +64,8 @@ export function userByUsername(connection: Connection,
 }
 
 
+/* Session *******************************************************************/
+
 export function addSession(connection: Connection,
                            userId: number) {
     const q = "INSERT INTO sessions (user_id, token, date) " +
@@ -85,6 +89,8 @@ export function sessionByToken(connection: Connection,
 }
 
 
+/* Folder ********************************************************************/
+
 export function addFolder(connection: Connection,
                           userId: number,
                           name: string,
@@ -107,6 +113,8 @@ export function foldersByUserId(connection: Connection,
     return connection.query(q, [userId]).then(res => res.rows)
 }
 
+
+/* Feed **********************************************************************/
 
 export function addFeed(connection: Connection,
                         folderId: number,
