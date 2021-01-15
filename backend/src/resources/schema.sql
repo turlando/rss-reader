@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS folders (
     id                INTEGER  PRIMARY KEY               GENERATED ALWAYS AS IDENTITY,
     user_id           INTEGER  REFERENCES users (id)     NOT NULL,
     name              TEXT                               NOT NULL,
-    parent_folder_id  INTEGER  REFERENCES folders (id),
+    parent_folder_id  INTEGER  REFERENCES folders (id)
 );
 
 CREATE TABLE IF NOT EXISTS feeds (
@@ -33,4 +33,4 @@ CREATE TABLE IF NOT EXISTS items (
     link         TEXT                                NOT NULL,
     description  TEXT                                NOT NULL,
     date         TIMESTAMPTZ                         NOT NULL
-)
+);

@@ -1,10 +1,9 @@
 import { Pool } from 'pg'
 import * as resources from './resources'
-import * as bcrypt from 'bcrypt'
 import { v4 as uuid } from 'uuid'
 
 
-type Connection = Pool
+export type Connection = Pool
 
 
 const SCHEMA_FILE = resources.read('schema.sql')
@@ -16,36 +15,40 @@ const DEFAULT_USER = 'rss-reader'
 const DEFAULT_PASS = 'changeme'
 const DEFAULT_DB   = 'rss-reader'
 
-const BCRYPT_SALT_ROUNDS = 10
-
 const SESSION_VALIDITY_IN_HOURS = 24 * 7
 
 
 export function makeConnection(): Connection {
-    const pool = new Pool({
+    return new Pool({
         host: DEFAULT_HOST,
         port: DEFAULT_PORT,
         user: DEFAULT_USER,
         password: DEFAULT_PASS,
         database: DEFAULT_DB,
     })
-    SCHEMA_STATEMENTS.forEach(q => pool.query(q))
-    return pool
+}
+
+
+export async function initialize(connection: Connection) {
+    const client = await connection.connect()
+    const results = SCHEMA_STATEMENTS.map(s => client.query(s))
+    return Promise.all(results).then(rs => {
+        client?.release()
+        return rs
+    })
 }
 
 
 export function addUser(connection: Connection,
                         username: string,
-                        plaintextPassword: string) {
+                        password: string) {
     const q = "INSERT INTO users (username, password) " +
               "     VALUES ($1, $2)" +
               "  RETURNING id"
-    return bcrypt.hash(plaintextPassword, BCRYPT_SALT_ROUNDS)
-        .then(hashedPassword =>
-            connection.query({text: q,
-                              values: [username, hashedPassword],
-                              rowMode: 'array'}))
-        .then(res => res.rows[0][0])
+    const query = {text: q,
+                   values: [username, password],
+                   rowMode: 'array'}
+    return connection.query(query).then(res => res.rows[0][0])
 }
 
 
@@ -56,14 +59,6 @@ export function userByUsername(connection: Connection,
               " WHERE users.username = $1"
     return connection.query(q, [username])
                      .then(res => res.rows[0])
-}
-
-
-export function checkUser(connection: Connection,
-                          username: string,
-                          plaintextPassword: string) {
-    return userByUsername(connection, username)
-           .then(user => bcrypt.compare(plaintextPassword, user.password))
 }
 
 
