@@ -6,6 +6,8 @@ import * as bcrypt from 'bcrypt'
 const BCRYPT_SALT_ROUNDS = 10
 
 
+/* User ***********************************************************************/
+
 export async function addUser(connection: Connection,
                               username: string,
                               plaintextPassword: string) {
@@ -26,6 +28,8 @@ async function checkUser(connection: Connection,
     return user;
 }
 
+
+/* Session ********************************************************************/
 
 export async function addSession(connection: Connection,
                                  username: string,
@@ -48,3 +52,17 @@ export async function removeSession(connection: Connection,
     const result = db.removeSession(connection, token)
     if (! result) throw new Error("Session not found")
 }
+
+
+/* Folder *********************************************************************/
+
+export const addFolder = db.addFolder
+
+export async function removeFolder(connection: Connection,
+                                   id: number,
+                                   userId: number) {
+    const result = db.removeFolder(connection, id, userId)
+    if (! result) throw new Error("Folder not found")
+}
+
+export const updateFolder = db.updateFolder

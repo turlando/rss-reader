@@ -16,7 +16,7 @@ const DEFAULT_PASS = 'changeme'
 const DEFAULT_DB   = 'rss-reader'
 
 
-/* User **********************************************************************/
+/* Connection *****************************************************************/
 
 export function makeConnection(): Connection {
     return new Pool({
@@ -39,7 +39,7 @@ export async function initialize(connection: Connection) {
 }
 
 
-/* User **********************************************************************/
+/* User ***********************************************************************/
 
 export function addUser(connection: Connection,
                         username: string,
@@ -75,7 +75,7 @@ export function userBySessionToken(connection: Connection,
 }
 
 
-/* Session *******************************************************************/
+/* Session ********************************************************************/
 
 export function addSession(connection: Connection,
                            userId: number) {
@@ -97,19 +97,44 @@ export function removeSession(connection: Connection,
 }
 
 
-/* Folder ********************************************************************/
+/* Folder *********************************************************************/
 
 export function addFolder(connection: Connection,
                           userId: number,
                           name: string,
-                          parent: number) {
-    const q = "INSERT INTO folders (user_id, name, parent) " +
+                          parentFolderId?: number) {
+    const q = "INSERT INTO folders (user_id, name, parent_folder_id) " +
               "     VALUES ($1, $2, $3) " +
               "  RETURNING id"
     const query = {text: q,
-                   values: [userId, name, parent],
+                   values: [userId, name, parentFolderId],
                    rowMode: 'array'}
     return connection.query(query).then(res => res.rows[0][0])
+}
+
+
+export function removeFolder(connection: Connection,
+                             id: number,
+                             userId: number) {
+    const q = "DELETE FROM folders " +
+              "      WHERE folders.id = $1 " +
+              "        AND folders.user_id = $2"
+    return connection.query(q, [id, userId]).then(res => !!res.rowCount)
+}
+
+
+export function updateFolder(connection: Connection,
+                             id: number,
+                             userId: number,
+                             name: string,
+                             parentFolderId?: number) {
+    const q = "UPDATE folders " +
+              "   SET name = $3 " +
+              "     , parent_folder_id = $4 " +
+              " WHERE id = $1 " +
+              "   AND user_id = $2"
+    return connection.query(q, [id, userId, name, parentFolderId])
+                     .then(res => !!res.rowCount)
 }
 
 
@@ -122,7 +147,7 @@ export function foldersByUserId(connection: Connection,
 }
 
 
-/* Feed **********************************************************************/
+/* Feed ***********************************************************************/
 
 export function addFeed(connection: Connection,
                         folderId: number,
