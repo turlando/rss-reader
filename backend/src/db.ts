@@ -64,6 +64,17 @@ export function userByUsername(connection: Connection,
 }
 
 
+export function userBySessionToken(connection: Connection,
+                                   token: string) {
+    const q = "SELECT users.* " +
+              "  FROM users, sessions " +
+              " WHERE users.id = sessions.user_id " +
+              "   AND sessions.token = $1"
+    return connection.query(q, [token])
+        .then(res => res.rows[0])
+}
+
+
 /* Session *******************************************************************/
 
 export function addSession(connection: Connection,
@@ -78,14 +89,11 @@ export function addSession(connection: Connection,
 }
 
 
-export function sessionByToken(connection: Connection,
-                               token: string) {
-    const q = "SELECT * " +
-              "  FROM sessions " +
-              " WHERE sessions.token = $1 " +
-              "   AND sessions.date > NOW() - interval '2 hour'"
-    const query = {text: q, values: [token]}
-    return connection.query(query).then(res => res.rows[0])
+export function removeSession(connection: Connection,
+                              token: string) {
+    const q = "DELETE FROM sessions " +
+              "      WHERE token = $1 "
+    return connection.query(q, [token]).then(res => !!res.rowCount)
 }
 
 

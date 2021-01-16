@@ -1,17 +1,15 @@
 import { Connection } from './db'
 import * as db from './db'
-import * as server from './server'
+import { run } from './server'
 import * as api from './api'
 
 async function main() {
     const connection = db.makeConnection()
     await db.initialize(connection)
-    server.run(connection)
-          .on('close', () => {
-              console.log("DIO")
-              console.log("PORCO")
-              connection.end()
-          })
+    const server = run(connection).on('close', () => connection.end())
+    const shutdown = () => server.close(() => process.exit(0))
+    process.on('SIGTERM', shutdown)
+    process.on('SIGINT', shutdown)
 }
 
 main()

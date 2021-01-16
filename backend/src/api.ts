@@ -14,16 +14,37 @@ export async function addUser(connection: Connection,
 }
 
 
-function checkUser(connection: Connection,
-                   username: string,
-                   plaintextPassword: string) {
-    return db.userByUsername(connection, username)
-        .then(user => bcrypt.compare(plaintextPassword, user.password))
+async function checkUser(connection: Connection,
+                         username: string,
+                         plaintextPassword: string) {
+    const user = await db.userByUsername(connection, username)
+    if (! user) throw new Error("Unauthorized")
+
+    const match = await bcrypt.compare(plaintextPassword, user.password)
+    if (! match) throw new Error("Unauthorized")
+
+    return user;
 }
 
 
-export function addSession(connection: Connection,
-                           username: string,
-                           plaintextPassword: string) {
-    return checkUser(connection, username, plaintextPassword)
+export async function addSession(connection: Connection,
+                                 username: string,
+                                 plaintextPassword: string) {
+    const user = await checkUser(connection, username, plaintextPassword)
+    return db.addSession(connection, user.id)
+}
+
+
+export async function userBySessionToken(connection: Connection,
+                                         token: string) {
+    const user = db.userBySessionToken(connection, token)
+    if (! user) throw new Error("Unauthorized")
+    return user
+}
+
+
+export async function removeSession(connection: Connection,
+                                    token: string) {
+    const result = db.removeSession(connection, token)
+    if (! result) throw new Error("Session not found")
 }

@@ -2,8 +2,8 @@ import { NextHandleFunction } from 'connect';
 import httpError from 'http-errors';
 import express, { Router } from 'express';
 import bodyParser from 'body-parser';
-import { Connection } from './db';
-import { addUser } from './api';
+import { Connection, removeSession } from './db';
+import { addUser, addSession, userBySessionToken } from './api';
 
 
 const DEFAULT_PORT = 8000
@@ -26,8 +26,39 @@ function requireParams(...params: string[]): NextHandleFunction {
 }
 
 
+function requireSession(connection: Connection): NextHandleFunction {
+    return (req, res, next) => {
+        const token = req.headers['x-token']
+        if (! token) return next(httpError(401, "Unauthorized"))
+
+        // @ts-ignore
+        userBySessionToken(connection, token)
+            .then(user => {
+                // @ts-ignore
+                req.token = token
+                // @ts-ignore
+                req.user = user
+                next()
+            })
+            .catch(err => next(httpError(401, err)))
+    }
+}
+
+
 export function run(connection: Connection) {
-    const sessionRouter = Router().post('', (req, res) => res.status(200).send())
+    const sessionRouter = Router()
+        .post('', requireParams("username", "password"), (req, res, next) => {
+            const { username, password } = req.body
+            addSession(connection, username, password)
+                .then(token => res.status(200).send(token))
+                .catch(err => next(httpError(401, err)))
+        })
+        .delete('', requireSession(connection), (req, res, next) => {
+            // @ts-ignore
+            removeSession(connection, req.token)
+                .then(() => res.status(200).send())
+                .catch(err => next(httpError(404, err)))
+        })
 
     return express()
         .use(bodyParser.json())
