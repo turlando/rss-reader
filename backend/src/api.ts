@@ -37,7 +37,7 @@ export async function addSession(connection: Connection,
 
 export async function userBySessionToken(connection: Connection,
                                          token: string) {
-    const user = db.userBySessionToken(connection, token)
+    const user = await db.userBySessionToken(connection, token)
     if (! user) throw new Error("Unauthorized")
     return user
 }
