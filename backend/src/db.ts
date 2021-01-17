@@ -138,37 +138,30 @@ export function updateFolder(connection: Connection,
 }
 
 
-export function foldersByUserId(connection: Connection,
-                                userId: number) {
-    const q = "SELECT * " +
-              "  FROM folders " +
-              " WHERE folders.user_id = $1"
-    return connection.query(q, [userId]).then(res => res.rows)
-}
-
-
 /* Feed ***********************************************************************/
 
 export function addFeed(connection: Connection,
-                        folderId: number,
-                        name: string,
+                        userId: number,
+                        url: string,
                         title: string,
                         link: string,
-                        description: string) {
-    const q = "INSERT INTO feeds (folder_id, name, title, link, description) " +
-              "     VALUES ($1, $2, $3, $4, $5) " +
+                        description: string,
+                        folderId?: number) {
+    const q = "INSERT INTO feeds (user_id, folder_id, url, title, link, description) " +
+              "     VALUES ($1, $2, $3, $4, $5, $6) " +
               "  RETURNING id"
     const query = {text: q,
-                   values: [folderId, name, title, link, description],
+                   values: [userId, folderId, url, title, link, description],
                    rowMode: 'array'}
     return connection.query(query).then(res => res.rows[0][0])
 }
 
 
-export function feedsByFolderId(connection: Connection,
-                                folderId: number) {
-    const q = "SELECT * " +
-              "  FROM feeds" +
-              " WHERE feeds.folder_id = $1"
-    return connection.query(q, [folderId]).then(res => res.rows)
+export function removeFeed(connection: Connection,
+                           id: number,
+                           userId: number) {
+    const q = "DELETE FROM feeds " +
+        "      WHERE feeds.id = $1 " +
+        "        AND feeds.user_id = $2"
+    return connection.query(q, [id, userId]).then(res => !!res.rowCount)
 }

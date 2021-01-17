@@ -1,6 +1,7 @@
+import * as bcrypt from 'bcrypt'
+import RssParser from 'rss-parser'
 import { Connection } from './db'
 import * as db from './db'
-import * as bcrypt from 'bcrypt'
 
 
 const BCRYPT_SALT_ROUNDS = 10
@@ -66,3 +67,27 @@ export async function removeFolder(connection: Connection,
 }
 
 export const updateFolder = db.updateFolder
+
+
+/* Feed ***********************************************************************/
+
+export async function addFeed(connection: Connection,
+                              userId: number,
+                              url: string,
+                              folderId?: number) {
+    const rss = new RssParser()
+    const feed = await rss.parseURL(url)
+    db.addFeed(connection, userId, url,
+               // @ts-ignore: TS2345: Argument of type 'string | undefined' is
+               //             not assignable to parameter of type 'string'.
+               feed.title, feed.link, feed.description,
+               folderId)
+}
+
+
+export async function removeFeed(connection: Connection,
+                                 id: number,
+                                 userId: number) {
+    const result = db.removeFeed(connection, id, userId)
+    if (! result) throw new Error("Feed not found")
+}

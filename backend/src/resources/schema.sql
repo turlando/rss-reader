@@ -19,8 +19,9 @@ CREATE TABLE IF NOT EXISTS folders (
 
 CREATE TABLE IF NOT EXISTS feeds (
     id           INTEGER  PRIMARY KEY              GENERATED ALWAYS AS IDENTITY,
-    folder_id    INTEGER  REFERENCES folders (id)  NOT NULL,
-    name         TEXT                              NOT NULL,
+    user_id      INTEGER  REFERENCES users (id)    NOT NULL,
+    folder_id    INTEGER  REFERENCES folders (id),
+    url          TEXT                              NOT NULL,
     title        TEXT                              NOT NULL,
     link         TEXT                              NOT NULL,
     description  TEXT                              NOT NULL
