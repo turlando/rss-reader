@@ -161,7 +161,55 @@ export function removeFeed(connection: Connection,
                            id: number,
                            userId: number) {
     const q = "DELETE FROM feeds " +
-        "      WHERE feeds.id = $1 " +
-        "        AND feeds.user_id = $2"
+              "      WHERE feeds.id = $1 " +
+              "        AND feeds.user_id = $2"
     return connection.query(q, [id, userId]).then(res => !!res.rowCount)
+}
+
+
+export function updateFeed(connection: Connection,
+                           id: number,
+                           userId: number,
+                           folderId?: number) {
+    const q = "UPDATE feeds " +
+        "   SET folder_id = $3 " +
+        " WHERE id = $1 " +
+        "   AND user_id = $2"
+    return connection.query(q, [id, userId, folderId])
+        .then(res => !!res.rowCount)
+}
+
+
+export function feedById(connection: Connection,
+                         id: number,
+                         userId: number) {
+    const q = "SELECT * " +
+              "  FROM feeds " +
+              " WHERE feeds.id = $1 " +
+              "   AND feeds.user_id = $2"
+    return connection.query(q, [id, userId]).then(res => res.rows[0])
+}
+
+
+/* Item ***********************************************************************/
+
+export function upsertItem(connection: Connection,
+                           feedId: number,
+                           guid: string,
+                           title: string,
+                           description: string,
+                           link: string,
+                           date: string) {
+    const q = "  INSERT INTO items (feed_id, guid, title, description, link, date) " +
+              "       VALUES ($1, $2, $3, $4, $5, $6) " +
+              "  ON CONFLICT (feed_id, guid) " +
+              "DO UPDATE SET title = $3 " +
+              "            , description = $4 " +
+              "            , link = $5 " +
+              "            , date = $6 " +
+              "  RETURNING id "
+    const query = {text: q,
+                   values: [feedId, guid, title, description, link, date],
+                   rowMode: 'array'}
+    return connection.query(query).then(res => res.rows[0][0])
 }

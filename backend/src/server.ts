@@ -5,7 +5,9 @@ import bodyParser from 'body-parser';
 import { Connection } from './db';
 import { addUser, userBySessionToken,
          addSession, removeSession,
-         addFolder, removeFolder, updateFolder } from './api';
+         addFolder, removeFolder, updateFolder,
+         addFeed, removeFeed, updateFeed,
+         updateItems } from './api';
 
 
 const DEFAULT_PORT = 8000
@@ -122,6 +124,57 @@ function makeFolderRouter(connection: Connection): Router {
 }
 
 
+function makeFeedRouter(connection: Connection): Router {
+    return Router()
+        .post('/',
+              requireSession(connection),
+              requireParams("url", "folder"),
+              (req, res, next) => {
+                  const { url, folder } = req.body
+                  // @ts-ignore: TS2339: Property 'user' does not exist on type
+                  //             'Request<ParamsDictionary, any, any, ParsedQs>'.
+                  addFeed(connection, req.user.id, url, folder)
+                      .then(() => res.status(200).send())
+                      .catch(err => next(httpError(400, err)))
+              })
+        .delete('/:id(\\d+)',
+                requireSession(connection),
+                (req, res, next) => {
+                    // @ts-ignore: TS2345: Argument of type 'string' is not
+                    //             assignable to parameter of type 'number'.
+                    // @ts-ignore: TS2339: Property 'user' does not exist on type
+                    //             'Request<ParamsDictionary, any, any, ParsedQs>'.
+                    removeFeed(connection, req.params.id, req.user.id)
+                        .then(() => res.status(200).send())
+                        .catch(err => next(httpError(404, err)))
+                })
+        .put('/:id(\\d+)',
+             requireSession(connection),
+             requireParams("folder"),
+             (req, res, next) => {
+                 const { folder } = req.body
+                 // @ts-ignore: TS2345: Argument of type 'string' is not
+                 //             assignable to parameter of type 'number'.
+                 // @ts-ignore: TS2339: Property 'user' does not exist on type
+                 //             'Request<ParamsDictionary, any, any, ParsedQs>'.
+                 updateFeed(connection, req.params.id, req.user.id, folder)
+                     .then(() => res.status(200).send())
+                     .catch(err => next(httpError(400, err)))
+             })
+        .post('/:id(\\d+)/update',
+              requireSession(connection),
+              (req, res, next) => {
+                  // @ts-ignore: TS2345: Argument of type 'string' is not
+                  //             assignable to parameter of type 'number'.
+                  // @ts-ignore: TS2339: Property 'user' does not exist on type
+                  //             'Request<ParamsDictionary, any, any, ParsedQs>'.
+                  updateItems(connection, req.params.id, req.user.id)
+                      .then(() => res.status(200).send())
+                      .catch(err => next(httpError(400, err)))
+              })
+}
+
+
 /* Entrypoint *****************************************************************/
 
 export function run(connection: Connection) {
@@ -130,13 +183,7 @@ export function run(connection: Connection) {
         .use('/user', makeUserRouter(connection))
         .use('/session', makeSessionRouter(connection))
         .use('/folder', makeFolderRouter(connection))
-        // .get('/folder, ...)
-        // .post('/folder', ...)
-        // .put('/folder/:id, requireParams("name", "parent")
-        // .delete('/folder/:id, ...)
-        // .get('/folder/:id/items, ...)
-        // .get('/item/:id', ...)
-        // .put('/item/:id', requireParams("read"))
+        .use('/feed', makeFeedRouter(connection))
         .use((req, res, next) => next(httpError(404))) // Catchall / default route
         .use(errorHandler) // Default error handler
         .listen(DEFAULT_PORT)

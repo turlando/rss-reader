@@ -77,11 +77,13 @@ export async function addFeed(connection: Connection,
                               folderId?: number) {
     const rss = new RssParser()
     const feed = await rss.parseURL(url)
-    db.addFeed(connection, userId, url,
-               // @ts-ignore: TS2345: Argument of type 'string | undefined' is
-               //             not assignable to parameter of type 'string'.
-               feed.title, feed.link, feed.description,
-               folderId)
+    const feedId = await db.addFeed(
+        connection, userId, url,
+        // @ts-ignore: TS2345: Argument of type 'string | undefined' is
+        //             not assignable to parameter of type 'string'.
+        feed.title, feed.link, feed.description,
+        folderId)
+    await updateItems(connection, feedId, userId)
 }
 
 
@@ -90,4 +92,30 @@ export async function removeFeed(connection: Connection,
                                  userId: number) {
     const result = db.removeFeed(connection, id, userId)
     if (! result) throw new Error("Feed not found")
+}
+
+
+export async function updateFeed(connection: Connection,
+                                 id: number,
+                                 userId: number,
+                                 folderId?: number) {
+    const result = db.updateFeed(connection, id, userId, folderId)
+    if (! result) throw new Error("Feed not found")
+}
+
+
+/* Item ***********************************************************************/
+
+export async function updateItems(connection: Connection,
+                                  feedId: number,
+                                  userId: number) {
+    // @ts-ignore: TS2339: Property 'url' does not exist on type 'Promise<any>'.
+    const feed = await db.feedById(connection, feedId, userId)
+    const rss = new RssParser()
+    const f = await rss.parseURL(feed.url)
+    // @ts-ignore: TS2345: Argument of type 'string | undefined' is not
+    //             assignable to parameter of type 'string'.
+    f.items.forEach(item => db.upsertItem(connection, feedId, item.guid,
+                                          item.title, item.content,
+                                          item.link, item.isoDate))
 }
