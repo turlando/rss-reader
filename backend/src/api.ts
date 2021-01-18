@@ -119,3 +119,21 @@ export async function updateItems(connection: Connection,
                                           item.title, item.content,
                                           item.link, item.isoDate))
 }
+
+
+/* Subscriptions **************************************************************/
+
+export async function getSubscriptions(connection: Connection,
+                                       userId: number) {
+    const folderSubtree = async (parentId?: number) => {
+        const folders = await db.foldersByParent(connection, userId, parentId)
+        const feeds = await db.feedsByFolder(connection, userId, parentId)
+        const sub = await Promise.all(folders.map(async (f) => {
+            f.children = await folderSubtree(f.id)
+            return f
+        }))
+        return sub.concat(feeds)
+    }
+
+    return await folderSubtree()
+}

@@ -138,6 +138,18 @@ export function updateFolder(connection: Connection,
 }
 
 
+export function foldersByParent(connection: Connection,
+                                userId: number,
+                                parentId?: number) {
+    const q = "SELECT * " +
+              "  FROM folders " +
+              " WHERE folders.user_id = $1 " +
+        (parentId === undefined
+            ? "   AND folders.parent_folder_id IS NULL"
+            : "   AND folders.parent_folder_id = $2")
+    return connection.query(q, parentId ? [userId, parentId] : [userId]).then(res => res.rows)
+}
+
 /* Feed ***********************************************************************/
 
 export function addFeed(connection: Connection,
@@ -188,6 +200,19 @@ export function feedById(connection: Connection,
               " WHERE feeds.id = $1 " +
               "   AND feeds.user_id = $2"
     return connection.query(q, [id, userId]).then(res => res.rows[0])
+}
+
+
+export function feedsByFolder(connection: Connection,
+                             userId: number,
+                             folderId?: number) {
+    const q = "SELECT * " +
+              "  FROM feeds " +
+              " WHERE feeds.user_id = $1 " +
+        (folderId === undefined
+            ? "   AND feeds.folder_id IS NULL"
+            : "   AND feeds.folder_id = $2")
+    return connection.query(q, folderId ? [userId, userId] : [userId]).then(res => res.rows)
 }
 
 
