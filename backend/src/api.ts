@@ -7,6 +7,12 @@ import * as db from './db'
 const BCRYPT_SALT_ROUNDS = 10
 
 
+export enum Types {
+    Folder = "folder",
+    Feed   = "feed"
+}
+
+
 /* User ***********************************************************************/
 
 export async function addUser(connection: Connection,
@@ -57,6 +63,34 @@ export async function removeSession(connection: Connection,
 
 /* Folder *********************************************************************/
 
+
+export interface Folder {
+    type: Types.Folder;
+    id: number;
+    name: string;
+    parentFolderId?: number;
+}
+
+
+export function Folder(
+    id: number,
+    name: string,
+    parentFolderId?: number
+): Folder {
+    return {
+        type: Types.Folder,
+        id: id,
+        name: name,
+        parentFolderId: parentFolderId
+    }
+}
+
+
+export function folderRowToFolder(row: db.FolderRow): Folder {
+    return Folder(row.id, row.name, row.parent_folder_id)
+}
+
+
 export const addFolder = db.addFolder
 
 export async function removeFolder(connection: Connection,
@@ -68,8 +102,53 @@ export async function removeFolder(connection: Connection,
 
 export const updateFolder = db.updateFolder
 
+export async function getFoldersByParent(
+    connection: Connection,
+    userId: number,
+    parentId?: number
+): Promise<Folder[]> {
+    const res = await db.getFoldersByParent(connection, userId, parentId)
+    return res.rows.map(x => folderRowToFolder(x))
+}
+
 
 /* Feed ***********************************************************************/
+
+export interface Feed {
+    type: Types.Feed;
+    id: number,
+    url: string,
+    title: string,
+    link: string,
+    description: string,
+    folderId?: number
+}
+
+
+export function Feed(
+    id: number,
+    url: string,
+    title: string,
+    link: string,
+    description: string,
+    folderId?: number
+): Feed {
+    return {
+        type: Types.Feed,
+        id: id,
+        url: url,
+        title: title,
+        link: link,
+        description: description,
+        folderId: folderId,
+    }
+}
+
+
+export function feedRowToFeed(row: db.FeedRow): Feed {
+    return Feed(row.id, row.url, row.title, row.link, row.description, row.folder_id)
+}
+
 
 export async function addFeed(connection: Connection,
                               userId: number,
@@ -104,6 +183,16 @@ export async function updateFeed(connection: Connection,
 }
 
 
+export async function getFeedsByFolder(
+    connection: Connection,
+    userId: number,
+    folderId?: number
+): Promise<Feed[]> {
+    const res = await db.getFeedsByFolder(connection, userId, folderId)
+    return res.rows.map(x => feedRowToFeed(x))
+}
+
+
 /* Item ***********************************************************************/
 
 export async function updateItems(connection: Connection,
@@ -123,16 +212,36 @@ export async function updateItems(connection: Connection,
 
 /* Subscriptions **************************************************************/
 
-export async function getSubscriptions(connection: Connection,
-                                       userId: number) {
-    const folderSubtree = async (parentId?: number) => {
-        const folders = await db.foldersByParent(connection, userId, parentId)
-        const feeds = await db.feedsByFolder(connection, userId, parentId)
-        const sub = await Promise.all(folders.map(async (f) => {
-            f.children = await folderSubtree(f.id)
-            return f
-        }))
-        return sub.concat(feeds)
+export type Tree = Folder & { children: Tree[] }
+                 | Feed
+
+
+export function Tree(
+    id: number,
+    name: string,
+    children: Tree[],
+    parentFolderId?: number
+): Tree {
+    return {
+        ...Folder(id, name, parentFolderId),
+        children: children
+    }
+}
+
+
+export async function getSubscriptions(
+    connection: Connection,
+    userId: number
+): Promise<Tree[]> {
+    const folderSubtree = async (parentId?: number): Promise<Tree[]> => {
+        const folderToTree = async (f: Folder): Promise<Tree> =>
+            Tree(f.id, f.name, await folderSubtree(f.id), f.parentFolderId)
+
+        const folders = await getFoldersByParent(connection, userId, parentId)
+        const feeds = await getFeedsByFolder(connection, userId, parentId)
+
+        const folderTrees = await Promise.all(folders.map(folderToTree))
+        return [...folderTrees, ...feeds]
     }
 
     return await folderSubtree()

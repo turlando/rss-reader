@@ -13,8 +13,9 @@ CREATE TABLE IF NOT EXISTS sessions (
 CREATE TABLE IF NOT EXISTS folders (
     id                INTEGER  PRIMARY KEY GENERATED ALWAYS AS IDENTITY
   , user_id           INTEGER  REFERENCES users (id)                      NOT NULL
-  , name              TEXT     UNIQUE                                     NOT NULL
+  , name              TEXT                                                NOT NULL
   , parent_folder_id  INTEGER  REFERENCES folders (id) ON DELETE CASCADE
+  , UNIQUE (user_id, name)
 );
 
 CREATE TABLE IF NOT EXISTS feeds (

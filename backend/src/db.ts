@@ -1,6 +1,6 @@
-import { Pool } from 'pg'
-import * as resources from './resources'
+import { Pool, QueryResult } from 'pg'
 import { v4 as uuid } from 'uuid'
+import * as resources from './resources'
 
 
 export type Connection = Pool
@@ -99,6 +99,14 @@ export function removeSession(connection: Connection,
 
 /* Folder *********************************************************************/
 
+export interface FolderRow {
+    id: number;
+    user_id: number;
+    name: string;
+    parent_folder_id?: number;
+}
+
+
 export function addFolder(connection: Connection,
                           userId: number,
                           name: string,
@@ -138,19 +146,36 @@ export function updateFolder(connection: Connection,
 }
 
 
-export function foldersByParent(connection: Connection,
-                                userId: number,
-                                parentId?: number) {
+export async function getFoldersByParent(
+    connection: Connection,
+    userId: number,
+    parentId?: number
+): Promise<QueryResult<FolderRow>> {
     const q = "SELECT * " +
               "  FROM folders " +
               " WHERE folders.user_id = $1 " +
         (parentId === undefined
             ? "   AND folders.parent_folder_id IS NULL"
             : "   AND folders.parent_folder_id = $2")
-    return connection.query(q, parentId ? [userId, parentId] : [userId]).then(res => res.rows)
+    const args = parentId === undefined
+               ? [userId]
+               : [userId, parentId]
+    return connection.query<FolderRow>(q, args)
 }
 
+
 /* Feed ***********************************************************************/
+
+export interface FeedRow {
+    id: number;
+    user_id: number;
+    folder_id?: number;
+    url: string;
+    title: string;
+    link: string;
+    description: string;
+}
+
 
 export function addFeed(connection: Connection,
                         userId: number,
@@ -203,16 +228,21 @@ export function feedById(connection: Connection,
 }
 
 
-export function feedsByFolder(connection: Connection,
-                             userId: number,
-                             folderId?: number) {
+export function getFeedsByFolder(
+    connection: Connection,
+    userId: number,
+    folderId?: number
+): Promise<QueryResult<FeedRow>> {
     const q = "SELECT * " +
               "  FROM feeds " +
               " WHERE feeds.user_id = $1 " +
         (folderId === undefined
             ? "   AND feeds.folder_id IS NULL"
             : "   AND feeds.folder_id = $2")
-    return connection.query(q, folderId ? [userId, userId] : [userId]).then(res => res.rows)
+    const args = folderId === undefined
+               ? [userId]
+               : [userId, folderId]
+    return connection.query<FeedRow>(q, args)
 }
 
 
