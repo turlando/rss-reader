@@ -57,26 +57,38 @@ function query<Row, Params extends any[] = any[]>(
 
 /* User ***********************************************************************/
 
-export function addUser(connection: Connection,
-                        username: string,
-                        password: string) {
-    const q = "INSERT INTO users (username, password) " +
-              "     VALUES ($1, $2)" +
-              "  RETURNING id"
-    const query = {text: q,
-                   values: [username, password],
-                   rowMode: 'array'}
-    return connection.query(query).then(res => res.rows[0][0])
+export interface UserRow {
+    id: number;
+    username: string;
+    password: string;
 }
 
 
-export function userByUsername(connection: Connection,
-                               username: string) {
-    const q = "SELECT * " +
-              "  FROM users " +
-              " WHERE users.username = $1"
-    return connection.query(q, [username])
-                     .then(res => res.rows[0])
+export function addUser(
+    connection: Connection,
+    username: string,
+    password: string
+): Promise<QueryResult<UserRow>> {
+    return query<UserRow>(
+        connection,
+        q("INSERT INTO users (username, password)",
+          "     VALUES ($1, $2)",
+          "  RETURNING *"),
+        [username, password])
+}
+
+
+export function getUserByUsername(
+    connection: Connection,
+    username: string
+): Promise<QueryResult<UserRow>> {
+    return query<UserRow>(
+        connection,
+        q("SELECT *",
+          "  FROM users",
+          " WHERE users.username = $1"),
+        [username]
+    )
 }
 
 

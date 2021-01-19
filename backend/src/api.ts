@@ -4,6 +4,8 @@ import { Connection } from './db'
 import * as db from './db'
 
 
+/* API types ******************************************************************/
+
 export enum ResultType {
     Success = "success",
     Failure = "failure"
@@ -46,29 +48,62 @@ export function Failure(error: ErrorType): Failure {
 export type Result<T> = Success<T> | Failure
 
 
+/* Defaults *******************************************************************/
+
 const BCRYPT_SALT_ROUNDS = 10
 
 
 /* User ***********************************************************************/
 
-export async function addUser(connection: Connection,
-                              username: string,
-                              plaintextPassword: string) {
-    const hashedPassword = await bcrypt.hash(plaintextPassword, BCRYPT_SALT_ROUNDS)
-    return db.addUser(connection, username, hashedPassword)
+interface User {
+    id: number;
+    username: string;
+    passwordHash: string;
 }
 
 
-async function checkUser(connection: Connection,
-                         username: string,
-                         plaintextPassword: string) {
-    const user = await db.userByUsername(connection, username)
-    if (! user) throw new Error("Unauthorized")
+function User(
+    id: number,
+    username: string,
+    passwordHash: string
+): User {
+    return {
+        id: id,
+        username: username,
+        passwordHash: passwordHash
+    }
+}
 
-    const match = await bcrypt.compare(plaintextPassword, user.password)
-    if (! match) throw new Error("Unauthorized")
 
-    return user;
+function userRowToUser(r: db.UserRow): User {
+    return {
+        id: r.id,
+        username: r.username,
+        passwordHash: r.password
+    }
+}
+
+
+export async function addUser(
+    connection: Connection,
+    username: string,
+    plaintextPassword: string
+): Promise<Result<User>> {
+    const hashedPassword = await bcrypt.hash(plaintextPassword, BCRYPT_SALT_ROUNDS)
+    return db.addUser(connection, username, hashedPassword)
+        .then(res => Success(userRowToUser(res.rows[0])))
+}
+
+
+export function getUserByUsername(
+    connection: Connection,
+    username: string
+): Promise<Result<User>> {
+    return db.getUserByUsername(connection, username)
+        .then(res => res.rowCount == 0
+            ? Success(userRowToUser(res.rows[0]))
+            : Failure(ErrorType.NotFound))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
@@ -77,8 +112,13 @@ async function checkUser(connection: Connection,
 export async function addSession(connection: Connection,
                                  username: string,
                                  plaintextPassword: string) {
-    const user = await checkUser(connection, username, plaintextPassword)
-    return db.addSession(connection, user.id)
+    const user = await getUserByUsername(connection, username)
+    if (user.result == ResultType.Failure) return
+
+    const isValid = await bcrypt.compare(plaintextPassword, user.data.passwordHash)
+
+    if (isValid)
+        return db.addSession(connection, user.data.id)
 }
 
 
@@ -120,8 +160,8 @@ export function Folder(
 }
 
 
-function folderRowToFolder(row: db.FolderRow): Folder {
-    return Folder(row.id, row.name, row.parent_folder_id)
+function folderRowToFolder(r: db.FolderRow): Folder {
+    return Folder(r.id, r.name, r.parent_folder_id)
 }
 
 
@@ -304,7 +344,7 @@ export function folderToTreeFolder(f: Folder, children: Tree[]) {
 }
 
 
-function TreeFeed(
+export function TreeFeed(
     id: number,
     url: string,
     title: string,
