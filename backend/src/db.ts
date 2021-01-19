@@ -1,9 +1,13 @@
 import { Pool, QueryResult } from 'pg'
 import { v4 as uuid } from 'uuid'
+import * as log from 'loglevel'
 import * as resources from './resources'
 
 
 export type Connection = Pool
+
+
+const LOGGER = log.getLogger(module.id)
 
 
 const SCHEMA_FILE = resources.read('schema.sql')
@@ -161,6 +165,8 @@ export async function getFoldersByParent(
                ? [userId]
                : [userId, parentId]
     return connection.query<FolderRow>(q, args)
+        .then(res => res)
+        .catch(err => { console.log(err); throw err; })
 }
 
 
