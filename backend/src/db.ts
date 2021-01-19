@@ -166,18 +166,24 @@ export function addFolder(
 }
 
 
-export function removeFolder(
+export async function getFoldersByParent(
     connection: Connection,
-    id: number,
-    userId: number
+    userId: number,
+    parentId?: number
 ): Promise<QueryResult<FolderRow>> {
-    return query<FolderRow>(
-        connection,
-        q("DELETE FROM folders",
-          "      WHERE folders.id = $1",
-          "        AND folders.user_id = $2"),
-        [id, userId]
-    )
+    const t = q(
+        "SELECT *",
+        "  FROM folders",
+        " WHERE folders.user_id = $1",
+        "   AND folders.parent_folder_id", parentId === undefined
+            ? "IS NULL"
+            : "= $2")
+
+    const p = parentId === undefined
+        ? [userId]
+        : [userId, parentId]
+
+    return query<FolderRow>(connection, t, p)
 }
 
 
@@ -200,24 +206,18 @@ export function updateFolder(
 }
 
 
-export async function getFoldersByParent(
+export function removeFolder(
     connection: Connection,
-    userId: number,
-    parentId?: number
+    id: number,
+    userId: number
 ): Promise<QueryResult<FolderRow>> {
-    const t = q(
-        "SELECT *",
-        "  FROM folders",
-        " WHERE folders.user_id = $1",
-        "   AND folders.parent_folder_id", parentId === undefined
-                                         ? "IS NULL"
-                                         : "= $2")
-
-    const p = parentId === undefined
-            ? [userId]
-            : [userId, parentId]
-
-    return query<FolderRow>(connection, t, p)
+    return query<FolderRow>(
+        connection,
+        q("DELETE FROM folders",
+          "      WHERE folders.id = $1",
+          "        AND folders.user_id = $2"),
+        [id, userId]
+    )
 }
 
 
@@ -253,37 +253,6 @@ export function addFeed(
 }
 
 
-export function removeFeed(
-    connection: Connection,
-    id: number,
-    userId: number
-): Promise<QueryResult<FeedRow>> {
-    return query(
-        connection,
-        q("DELETE FROM feeds",
-          "      WHERE feeds.id = $1",
-          "        AND feeds.user_id = $2"),
-        [id, userId])
-}
-
-
-export function updateFeed(
-    connection: Connection,
-    id: number,
-    userId: number,
-    folderId?: number
-): Promise<QueryResult<FeedRow>> {
-    return query<FeedRow>(
-        connection,
-        q("   UPDATE feeds",
-          "      SET folder_id = $3",
-          "    WHERE id = $1 ",
-          "      AND user_id = $2",
-          "RETURNING *"),
-        [id, userId, folderId])
-}
-
-
 export function getFeedById(
     connection: Connection,
     id: number,
@@ -309,12 +278,43 @@ export function getFeedsByFolder(
         "  FROM feeds",
         " WHERE feeds.user_id = $1",
         "   AND feeds.folder_id", folderId === undefined
-                                ? "IS NULL"
-                                : "= $2")
+            ? "IS NULL"
+            : "= $2")
     const p = folderId === undefined
-               ? [userId]
-               : [userId, folderId]
+        ? [userId]
+        : [userId, folderId]
     return connection.query<FeedRow>(t, p)
+}
+
+
+export function updateFeed(
+    connection: Connection,
+    id: number,
+    userId: number,
+    folderId?: number
+): Promise<QueryResult<FeedRow>> {
+    return query<FeedRow>(
+        connection,
+        q("   UPDATE feeds",
+          "      SET folder_id = $3",
+          "    WHERE id = $1 ",
+          "      AND user_id = $2",
+          "RETURNING *"),
+        [id, userId, folderId])
+}
+
+
+export function removeFeed(
+    connection: Connection,
+    id: number,
+    userId: number
+): Promise<QueryResult<FeedRow>> {
+    return query(
+        connection,
+        q("DELETE FROM feeds",
+          "      WHERE feeds.id = $1",
+          "        AND feeds.user_id = $2"),
+        [id, userId])
 }
 
 

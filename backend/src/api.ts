@@ -224,16 +224,13 @@ export function addFolder(
 }
 
 
-export async function removeFolder(
+export function getFoldersByParent(
     connection: Connection,
-    id: number,
-    userId: number
-): Promise<Result<Folder>> {
-    return db.removeFolder(connection, id, userId)
-        .then(res => res.rowCount === 0
-                   ? Failure(ErrorType.NotFound)
-                   : Success(folderRowToFolder(res.rows[0])))
-        .catch(err => Failure(ErrorType.DatabaseError))
+    userId: number,
+    parentId?: number
+): Promise<Result<Folder[]>> {
+    return db.getFoldersByParent(connection, userId, parentId)
+        .then(res => Success(res.rows.map(folderRowToFolder)))
 }
 
 
@@ -252,13 +249,16 @@ export function updateFolder(
 }
 
 
-export function getFoldersByParent(
+export async function removeFolder(
     connection: Connection,
-    userId: number,
-    parentId?: number
-): Promise<Result<Folder[]>> {
-    return db.getFoldersByParent(connection, userId, parentId)
-        .then(res => Success(res.rows.map(folderRowToFolder)))
+    id: number,
+    userId: number
+): Promise<Result<Folder>> {
+    return db.removeFolder(connection, id, userId)
+        .then(res => res.rowCount === 0
+            ? Failure(ErrorType.NotFound)
+            : Success(folderRowToFolder(res.rows[0])))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
