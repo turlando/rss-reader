@@ -298,36 +298,38 @@ export function feedRowToFeed(row: db.FeedRow): Feed {
 }
 
 
-export async function addFeed(connection: Connection,
-                              userId: number,
-                              url: string,
-                              folderId?: number) {
+export async function addFeed(
+    connection: Connection,
+    userId: number,
+    url: string,
+    folderId?: number
+) {
     const rss = new RssParser()
     const feed = await rss.parseURL(url)
-    const feedId = await db.addFeed(
-        connection, userId, url,
-        // @ts-ignore: TS2345: Argument of type 'string | undefined' is
-        //             not assignable to parameter of type 'string'.
-        feed.title, feed.link, feed.description,
-        folderId)
-    await updateItems(connection, feedId, userId)
+
+    return db.addFeed(connection, userId, url,
+                      feed.title || "", feed.link || "", feed.description || "",
+                      folderId)
+        .then(res => {
+            const feed = feedRowToFeed(res.rows[0])
+            return updateItems(connection, feed.id, userId)
+                .then(_ => Success(feed))
+                .catch(err => Failure(ErrorType.DatabaseError))
+        })
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
-export async function removeFeed(connection: Connection,
-                                 id: number,
-                                 userId: number) {
-    const result = db.removeFeed(connection, id, userId)
-    if (! result) throw new Error("Feed not found")
-}
-
-
-export async function updateFeed(connection: Connection,
-                                 id: number,
-                                 userId: number,
-                                 folderId?: number) {
-    const result = db.updateFeed(connection, id, userId, folderId)
-    if (! result) throw new Error("Feed not found")
+export async function getFeedById(
+    connection: Connection,
+    id: number,
+    userId: number
+): Promise<Result<Feed>> {
+    return db.getFeedById(connection, id, userId)
+        .then(res => res.rowCount == 0
+            ? Failure(ErrorType.NotFound)
+            : Success(feedRowToFeed(res.rows[0])))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
@@ -341,20 +343,55 @@ export async function getFeedsByFolder(
 }
 
 
+export async function updateFeed(
+    connection: Connection,
+    id: number,
+    userId: number,
+    folderId?: number
+): Promise<Result<Feed>> {
+    return db.updateFeed(connection, id, userId, folderId)
+        .then(res => res.rowCount == 0
+            ? Failure(ErrorType.NotFound)
+            : Success(feedRowToFeed(res.rows[0])))
+        .catch(err => Failure(ErrorType.DatabaseError))
+}
+
+
+export async function removeFeed(
+    connection: Connection,
+    id: number,
+    userId: number
+): Promise<Result<Feed>> {
+    return db.removeFeed(connection, id, userId)
+        .then(res => res.rowCount == 0
+            ? Success(feedRowToFeed(res.rows[0]))
+            : Failure(ErrorType.NotFound))
+        .catch(err => Failure(ErrorType.DatabaseError))
+}
+
+
 /* Item ***********************************************************************/
 
-export async function updateItems(connection: Connection,
-                                  feedId: number,
-                                  userId: number) {
-    // @ts-ignore: TS2339: Property 'url' does not exist on type 'Promise<any>'.
-    const feed = await db.feedById(connection, feedId, userId)
+export async function updateItems(
+    connection: Connection,
+    feedId: number,
+    userId: number
+): Promise<Result<null>> {
+    const feed = await getFeedById(connection, feedId, userId)
+    if (feed.result == ResultType.Failure) return Failure(feed.error)
+
     const rss = new RssParser()
-    const f = await rss.parseURL(feed.url)
-    // @ts-ignore: TS2345: Argument of type 'string | undefined' is not
-    //             assignable to parameter of type 'string'.
-    f.items.forEach(item => db.upsertItem(connection, feedId, item.guid,
-                                          item.title, item.content,
-                                          item.link, item.isoDate))
+    const f = await rss.parseURL(feed.data.url)
+
+    f.items.forEach(item => db.upsertItem(connection, feedId,
+                                          item.guid || "",
+                                          item.title || "",
+                                          item.content || "",
+                                          item.link || "",
+                                          item.isoDate || ""))
+    // FIXME: implement DatabaseError checks
+    // TODO: return new items?
+    return Success(null)
 }
 
 

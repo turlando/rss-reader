@@ -234,54 +234,68 @@ export interface FeedRow {
 }
 
 
-export function addFeed(connection: Connection,
-                        userId: number,
-                        url: string,
-                        title: string,
-                        link: string,
-                        description: string,
-                        folderId?: number) {
-    const q = "INSERT INTO feeds (user_id, folder_id, url, title, link, description) " +
-              "     VALUES ($1, $2, $3, $4, $5, $6) " +
-              "  RETURNING id"
-    const query = {text: q,
-                   values: [userId, folderId, url, title, link, description],
-                   rowMode: 'array'}
-    return connection.query(query).then(res => res.rows[0][0])
+export function addFeed(
+    connection: Connection,
+    userId: number,
+    url: string,
+    title: string,
+    link: string,
+    description: string,
+    folderId?: number
+): Promise<QueryResult<FeedRow>> {
+    return query<FeedRow>(
+        connection,
+        q("INSERT INTO feeds (user_id, folder_id, url, title, link, description)",
+          "     VALUES ($1, $2, $3, $4, $5, $6)",
+          "  RETURNING id"),
+        [userId, folderId, url, title, link, description]
+    )
 }
 
 
-export function removeFeed(connection: Connection,
-                           id: number,
-                           userId: number) {
-    const q = "DELETE FROM feeds " +
-              "      WHERE feeds.id = $1 " +
-              "        AND feeds.user_id = $2"
-    return connection.query(q, [id, userId]).then(res => !!res.rowCount)
+export function removeFeed(
+    connection: Connection,
+    id: number,
+    userId: number
+): Promise<QueryResult<FeedRow>> {
+    return query(
+        connection,
+        q("DELETE FROM feeds",
+          "      WHERE feeds.id = $1",
+          "        AND feeds.user_id = $2"),
+        [id, userId])
 }
 
 
-export function updateFeed(connection: Connection,
-                           id: number,
-                           userId: number,
-                           folderId?: number) {
-    const q = "UPDATE feeds " +
-        "   SET folder_id = $3 " +
-        " WHERE id = $1 " +
-        "   AND user_id = $2"
-    return connection.query(q, [id, userId, folderId])
-        .then(res => !!res.rowCount)
+export function updateFeed(
+    connection: Connection,
+    id: number,
+    userId: number,
+    folderId?: number
+): Promise<QueryResult<FeedRow>> {
+    return query<FeedRow>(
+        connection,
+        q("   UPDATE feeds",
+          "      SET folder_id = $3",
+          "    WHERE id = $1 ",
+          "      AND user_id = $2",
+          "RETURNING *"),
+        [id, userId, folderId])
 }
 
 
-export function feedById(connection: Connection,
-                         id: number,
-                         userId: number) {
-    const q = "SELECT * " +
-              "  FROM feeds " +
-              " WHERE feeds.id = $1 " +
-              "   AND feeds.user_id = $2"
-    return connection.query(q, [id, userId]).then(res => res.rows[0])
+export function getFeedById(
+    connection: Connection,
+    id: number,
+    userId: number
+): Promise<QueryResult<FeedRow>> {
+    return query<FeedRow>(
+        connection,
+        q("SELECT *",
+          "  FROM feeds",
+          " WHERE feeds.id = $1",
+          "   AND feeds.user_id = $2"),
+        [id, userId])
 }
 
 
@@ -306,23 +320,36 @@ export function getFeedsByFolder(
 
 /* Item ***********************************************************************/
 
-export function upsertItem(connection: Connection,
-                           feedId: number,
-                           guid: string,
-                           title: string,
-                           description: string,
-                           link: string,
-                           date: string) {
-    const q = "  INSERT INTO items (feed_id, guid, title, description, link, date) " +
-              "       VALUES ($1, $2, $3, $4, $5, $6) " +
-              "  ON CONFLICT (feed_id, guid) " +
-              "DO UPDATE SET title = $3 " +
-              "            , description = $4 " +
-              "            , link = $5 " +
-              "            , date = $6 " +
-              "  RETURNING id "
-    const query = {text: q,
-                   values: [feedId, guid, title, description, link, date],
-                   rowMode: 'array'}
-    return connection.query(query).then(res => res.rows[0][0])
+export interface ItemRow {
+    id: number;
+    feed_id: number;
+    guid: string;
+    title: string;
+    description: string;
+    link: string;
+    date: Date;
+}
+
+
+export function upsertItem(
+    connection: Connection,
+    feedId: number,
+    guid: string,
+    title: string,
+    description: string,
+    link: string,
+    date: string
+): Promise<QueryResult<ItemRow>> {
+    return query<ItemRow>(
+        connection,
+        q("  INSERT INTO items (feed_id, guid, title, description, link, date)",
+          "       VALUES ($1, $2, $3, $4, $5, $6)",
+          "  ON CONFLICT (feed_id, guid)",
+          "DO UPDATE SET title = $3",
+          "            , description = $4",
+          "            , link = $5",
+          "            , date = $6",
+          "  RETURNING *"),
+        [feedId, guid, title, description, link, date]
+    )
 }
