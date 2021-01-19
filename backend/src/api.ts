@@ -86,12 +86,21 @@ export function Folder(
 }
 
 
-export function folderRowToFolder(row: db.FolderRow): Folder {
+function folderRowToFolder(row: db.FolderRow): Folder {
     return Folder(row.id, row.name, row.parent_folder_id)
 }
 
 
-export const addFolder = db.addFolder
+export function addFolder(
+    connection: Connection,
+    userId: number,
+    name: string,
+    parentFolderId?: number
+): Promise<Folder> {
+    return db.addFolder(connection, userId, name, parentFolderId)
+        .then(res => folderRowToFolder(res.rows[0]))
+}
+
 
 export async function removeFolder(connection: Connection,
                                    id: number,
@@ -100,15 +109,26 @@ export async function removeFolder(connection: Connection,
     if (! result) throw new Error("Folder not found")
 }
 
-export const updateFolder = db.updateFolder
 
-export async function getFoldersByParent(
+export function updateFolder(
+    connection: Connection,
+    id: number,
+    userId: number,
+    name: string,
+    parentFolderId: number
+): Promise<Folder> {
+    return db.updateFolder(connection, id, userId, name, parentFolderId)
+        .then(res => folderRowToFolder(res.rows[0]))
+}
+
+
+export function getFoldersByParent(
     connection: Connection,
     userId: number,
     parentId?: number
 ): Promise<Folder[]> {
-    const res = await db.getFoldersByParent(connection, userId, parentId)
-    return res.rows.map(x => folderRowToFolder(x))
+    return db.getFoldersByParent(connection, userId, parentId)
+        .then(res => res.rows.map(folderRowToFolder))
 }
 
 

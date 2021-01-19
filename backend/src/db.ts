@@ -1,7 +1,8 @@
-import { Pool, QueryResult } from 'pg'
-import { v4 as uuid } from 'uuid'
-import * as log from 'loglevel'
-import * as resources from './resources'
+import { Pool, QueryResult } from 'pg';
+import { v4 as uuid } from 'uuid';
+import * as log from 'loglevel';
+import * as resources from './resources';
+import { q } from './utils';
 
 
 export type Connection = Pool
@@ -40,6 +41,17 @@ export async function initialize(connection: Connection) {
         client?.release()
         return rs
     })
+}
+
+
+function query<Row, Params extends any[] = any[]>(
+    connection: Connection,
+    text: string,
+    params: Params
+): Promise<QueryResult<Row>> {
+    return connection.query<Row>(text, params)
+        .then(res => res)
+        .catch(err => { LOGGER.error(err); throw err })
 }
 
 
@@ -111,42 +123,52 @@ export interface FolderRow {
 }
 
 
-export function addFolder(connection: Connection,
-                          userId: number,
-                          name: string,
-                          parentFolderId?: number) {
-    const q = "INSERT INTO folders (user_id, name, parent_folder_id) " +
-              "     VALUES ($1, $2, $3) " +
-              "  RETURNING id"
-    const query = {text: q,
-                   values: [userId, name, parentFolderId],
-                   rowMode: 'array'}
-    return connection.query(query).then(res => res.rows[0][0])
+export function addFolder(
+    connection: Connection,
+    userId: number,
+    name: string,
+    parentFolderId?: number
+): Promise<QueryResult<FolderRow>> {
+    return query<FolderRow>(
+        connection,
+        q("INSERT INTO folders (user_id, name, parent_folder_id)",
+          "     VALUES ($1, $2, $3)",
+          "  RETURNING *"),
+        [userId, name, parentFolderId])
 }
 
 
-export function removeFolder(connection: Connection,
-                             id: number,
-                             userId: number) {
-    const q = "DELETE FROM folders " +
-              "      WHERE folders.id = $1 " +
-              "        AND folders.user_id = $2"
-    return connection.query(q, [id, userId]).then(res => !!res.rowCount)
+export function removeFolder(
+    connection: Connection,
+    id: number,
+    userId: number
+): Promise<QueryResult<FolderRow>> {
+    return query<FolderRow>(
+        connection,
+        q("DELETE FROM folders",
+          "      WHERE folders.id = $1",
+          "        AND folders.user_id = $2"),
+        [id, userId]
+    )
 }
 
 
-export function updateFolder(connection: Connection,
-                             id: number,
-                             userId: number,
-                             name: string,
-                             parentFolderId?: number) {
-    const q = "UPDATE folders " +
-              "   SET name = $3 " +
-              "     , parent_folder_id = $4 " +
-              " WHERE id = $1 " +
-              "   AND user_id = $2"
-    return connection.query(q, [id, userId, name, parentFolderId])
-                     .then(res => !!res.rowCount)
+export function updateFolder(
+    connection: Connection,
+    id: number,
+    userId: number,
+    name: string,
+    parentFolderId?: number
+): Promise<QueryResult<FolderRow>> {
+    return query<FolderRow>(
+        connection,
+        q("   UPDATE folders",
+          "      SET name = $3",
+          "        , parent_folder_id = $4",
+          "    WHERE id = $1",
+          "      AND user_id = $2",
+          "RETURNING *"),
+        [id, userId, name, parentFolderId])
 }
 
 
@@ -155,18 +177,19 @@ export async function getFoldersByParent(
     userId: number,
     parentId?: number
 ): Promise<QueryResult<FolderRow>> {
-    const q = "SELECT * " +
-              "  FROM folders " +
-              " WHERE folders.user_id = $1 " +
-        (parentId === undefined
-            ? "   AND folders.parent_folder_id IS NULL"
-            : "   AND folders.parent_folder_id = $2")
-    const args = parentId === undefined
-               ? [userId]
-               : [userId, parentId]
-    return connection.query<FolderRow>(q, args)
-        .then(res => res)
-        .catch(err => { console.log(err); throw err; })
+    const t = q(
+        "SELECT *",
+        "  FROM folders",
+        " WHERE folders.user_id = $1",
+        "   AND folders.parent_folder_id", parentId === undefined
+                                         ? "IS NULL"
+                                         : "= $2")
+
+    const p = parentId === undefined
+            ? [userId]
+            : [userId, parentId]
+
+    return query<FolderRow>(connection, t, p)
 }
 
 
@@ -239,16 +262,17 @@ export function getFeedsByFolder(
     userId: number,
     folderId?: number
 ): Promise<QueryResult<FeedRow>> {
-    const q = "SELECT * " +
-              "  FROM feeds " +
-              " WHERE feeds.user_id = $1 " +
-        (folderId === undefined
-            ? "   AND feeds.folder_id IS NULL"
-            : "   AND feeds.folder_id = $2")
-    const args = folderId === undefined
+    const t = q(
+        "SELECT *",
+        "  FROM feeds",
+        " WHERE feeds.user_id = $1",
+        "   AND feeds.folder_id", folderId === undefined
+                                ? "IS NULL"
+                                : "= $2")
+    const p = folderId === undefined
                ? [userId]
                : [userId, folderId]
-    return connection.query<FeedRow>(q, args)
+    return connection.query<FeedRow>(t, p)
 }
 
 
