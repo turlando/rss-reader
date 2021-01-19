@@ -4,13 +4,49 @@ import { Connection } from './db'
 import * as db from './db'
 
 
-const BCRYPT_SALT_ROUNDS = 10
-
-
-export enum Types {
-    Folder = "folder",
-    Feed   = "feed"
+export enum ResultType {
+    Success = "success",
+    Failure = "failure"
 }
+
+
+export interface Success<T> {
+    result: ResultType.Success;
+    data: T
+}
+
+
+export function Success<T>(data: T): Success<T> {
+    return {
+        result: ResultType.Success,
+        data: data
+    }
+}
+
+
+export enum ErrorType {
+    DatabaseError = "database_error",
+    NotFound = "not_found"
+}
+
+
+export interface Failure {
+    result: ResultType.Failure;
+    error: ErrorType;
+}
+
+
+export function Failure(error: ErrorType): Failure {
+    return {
+        result: ResultType.Failure,
+        error: error
+    }
+}
+
+export type Result<T> = Success<T> | Failure
+
+
+const BCRYPT_SALT_ROUNDS = 10
 
 
 /* User ***********************************************************************/
@@ -65,7 +101,6 @@ export async function removeSession(connection: Connection,
 
 
 export interface Folder {
-    type: Types.Folder;
     id: number;
     name: string;
     parentFolderId?: number;
@@ -78,7 +113,6 @@ export function Folder(
     parentFolderId?: number
 ): Folder {
     return {
-        type: Types.Folder,
         id: id,
         name: name,
         parentFolderId: parentFolderId
@@ -96,17 +130,23 @@ export function addFolder(
     userId: number,
     name: string,
     parentFolderId?: number
-): Promise<Folder> {
+): Promise<Result<Folder>> {
     return db.addFolder(connection, userId, name, parentFolderId)
-        .then(res => folderRowToFolder(res.rows[0]))
+        .then(res => Success(folderRowToFolder(res.rows[0])))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
-export async function removeFolder(connection: Connection,
-                                   id: number,
-                                   userId: number) {
-    const result = db.removeFolder(connection, id, userId)
-    if (! result) throw new Error("Folder not found")
+export async function removeFolder(
+    connection: Connection,
+    id: number,
+    userId: number
+): Promise<Result<Folder>> {
+    return db.removeFolder(connection, id, userId)
+        .then(res => res.rowCount === 0
+                   ? Failure(ErrorType.NotFound)
+                   : Success(folderRowToFolder(res.rows[0])))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
@@ -116,9 +156,12 @@ export function updateFolder(
     userId: number,
     name: string,
     parentFolderId: number
-): Promise<Folder> {
+): Promise<Result<Folder>> {
     return db.updateFolder(connection, id, userId, name, parentFolderId)
-        .then(res => folderRowToFolder(res.rows[0]))
+        .then(res => res.rowCount === 0
+                   ? Failure(ErrorType.NotFound)
+                   : Success(folderRowToFolder(res.rows[0])))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
@@ -126,16 +169,15 @@ export function getFoldersByParent(
     connection: Connection,
     userId: number,
     parentId?: number
-): Promise<Folder[]> {
+): Promise<Result<Folder[]>> {
     return db.getFoldersByParent(connection, userId, parentId)
-        .then(res => res.rows.map(folderRowToFolder))
+        .then(res => Success(res.rows.map(folderRowToFolder)))
 }
 
 
 /* Feed ***********************************************************************/
 
 export interface Feed {
-    type: Types.Feed;
     id: number,
     url: string,
     title: string,
@@ -154,7 +196,6 @@ export function Feed(
     folderId?: number
 ): Feed {
     return {
-        type: Types.Feed,
         id: id,
         url: url,
         title: title,
@@ -207,9 +248,9 @@ export async function getFeedsByFolder(
     connection: Connection,
     userId: number,
     folderId?: number
-): Promise<Feed[]> {
-    const res = await db.getFeedsByFolder(connection, userId, folderId)
-    return res.rows.map(x => feedRowToFeed(x))
+): Promise<Result<Feed[]>> {
+    return db.getFeedsByFolder(connection, userId, folderId)
+        .then(res => Success(res.rows.map(feedRowToFeed)))
 }
 
 
@@ -232,37 +273,90 @@ export async function updateItems(connection: Connection,
 
 /* Subscriptions **************************************************************/
 
-export type Tree = Folder & { children: Tree[] }
-                 | Feed
+export enum TreeElementType {
+    Folder = "folder",
+    Feed   = "feed"
+}
 
 
-export function Tree(
+export type TreeFolder = Folder & { type: TreeElementType.Folder, children: Tree[] }
+export type TreeFeed   = Feed   & { type: TreeElementType.Feed }
+
+export type Tree = TreeFolder | TreeFeed
+
+
+export function TreeFolder(
     id: number,
     name: string,
     children: Tree[],
     parentFolderId?: number
-): Tree {
+): TreeFolder {
     return {
+        type: TreeElementType.Folder,
         ...Folder(id, name, parentFolderId),
         children: children
     }
 }
 
 
+export function folderToTreeFolder(f: Folder, children: Tree[]) {
+    return TreeFolder(f.id, f.name, children, f.parentFolderId)
+}
+
+
+function TreeFeed(
+    id: number,
+    url: string,
+    title: string,
+    link: string,
+    description: string,
+    folderId?: number
+): TreeFeed {
+    return {
+        type: TreeElementType.Feed,
+        ...Feed(id, url, title, link, description, folderId)
+    }
+}
+
+
+function feedToTreeFeed(f: Feed) {
+    return TreeFeed(f.id, f.url, f.title, f.link, f.description, f.folderId)
+}
+
+
+// TypeScript can't narrow down the type of arrays of sum types.
+// We have to provide ourselves a type guard so that the compiler will verify
+// that a given array of Result<...> is actually and array of Success<...>.
+function isTreeFolderArraySuccess(
+    t: Result<TreeFolder>[]
+): t is Success<TreeFolder>[] {
+    return t.every(x => x.result == ResultType.Success)
+}
+
+
 export async function getSubscriptions(
     connection: Connection,
     userId: number
-): Promise<Tree[]> {
-    const folderSubtree = async (parentId?: number): Promise<Tree[]> => {
-        const folderToTree = async (f: Folder): Promise<Tree> =>
-            Tree(f.id, f.name, await folderSubtree(f.id), f.parentFolderId)
+): Promise<Result<Tree[]>> {
+    const getSubtree = async (parentId?: number): Promise<Result<Tree[]>> => {
 
         const folders = await getFoldersByParent(connection, userId, parentId)
-        const feeds = await getFeedsByFolder(connection, userId, parentId)
+        if (folders.result === ResultType.Failure) return Failure(folders.error)
 
-        const folderTrees = await Promise.all(folders.map(folderToTree))
-        return [...folderTrees, ...feeds]
+        const feeds = await getFeedsByFolder(connection, userId, parentId)
+        if (feeds.result === ResultType.Failure) return Failure(feeds.error)
+
+        const subtree = await Promise.all(folders.data.map(folder =>
+            getSubtree(folder.id)
+                .then(tree => tree.result == ResultType.Failure
+                            ? Failure(tree.error)
+                            : Success(folderToTreeFolder(folder, tree.data)))))
+
+        if (! isTreeFolderArraySuccess(subtree))
+            return Failure(ErrorType.DatabaseError)
+
+        return Success([...subtree.map(f => f.data), ...feeds.data.map(feedToTreeFeed)])
     }
 
-    return await folderSubtree()
+    return await getSubtree()
 }
