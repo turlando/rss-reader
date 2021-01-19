@@ -28,7 +28,8 @@ export function Success<T>(data: T): Success<T> {
 
 export enum ErrorType {
     DatabaseError = "database_error",
-    NotFound = "not_found"
+    NotFound = "not_found",
+    AuthenticationError = "authentication_error"
 }
 
 
@@ -92,6 +93,7 @@ export async function addUser(
     const hashedPassword = await bcrypt.hash(plaintextPassword, BCRYPT_SALT_ROUNDS)
     return db.addUser(connection, username, hashedPassword)
         .then(res => Success(userRowToUser(res.rows[0])))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
@@ -101,39 +103,84 @@ export function getUserByUsername(
 ): Promise<Result<User>> {
     return db.getUserByUsername(connection, username)
         .then(res => res.rowCount == 0
+                   ? Success(userRowToUser(res.rows[0]))
+                   : Failure(ErrorType.NotFound))
+        .catch(err => Failure(ErrorType.DatabaseError))
+}
+
+
+export async function getUserBySessionToken(
+    connection: Connection,
+    token: string
+): Promise<Result<User>> {
+    return db.getUserBySessionToken(connection, token)
+        .then(res => res.rowCount == 0
             ? Success(userRowToUser(res.rows[0]))
-            : Failure(ErrorType.NotFound))
+            : Failure(ErrorType.AuthenticationError))
         .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
 /* Session ********************************************************************/
 
-export async function addSession(connection: Connection,
-                                 username: string,
-                                 plaintextPassword: string) {
+
+export interface Session {
+    userId: number;
+    token: string;
+    date: Date;
+}
+
+
+function Session(
+    userId: number,
+    token: string,
+    date: Date
+): Session {
+    return {
+        userId: userId,
+        token: token,
+        date: date
+    }
+}
+
+
+function sessionRowToSession(row: db.SessionRow): Session {
+    return Session(row.user_id, row.token, row.date)
+}
+
+
+export async function addSession(
+    connection: Connection,
+    username: string,
+    plaintextPassword: string
+): Promise<Result<Session>> {
     const user = await getUserByUsername(connection, username)
-    if (user.result == ResultType.Failure) return
+    if (user.result == ResultType.Failure)
+        return user.error == ErrorType.NotFound
+             ? Failure(ErrorType.AuthenticationError)
+             : Failure(user.error)
 
-    const isValid = await bcrypt.compare(plaintextPassword, user.data.passwordHash)
-
-    if (isValid)
+    const passwordValid = await bcrypt.compare(plaintextPassword,
+                                               user.data.passwordHash)
+    if (passwordValid)
         return db.addSession(connection, user.data.id)
+            .then(res => Success(sessionRowToSession(res.rows[0])))
+            .catch(err => Failure(ErrorType.DatabaseError))
+    else
+        return Failure(ErrorType.AuthenticationError)
 }
 
 
-export async function userBySessionToken(connection: Connection,
-                                         token: string) {
-    const user = await db.userBySessionToken(connection, token)
-    if (! user) throw new Error("Unauthorized")
-    return user
-}
-
-
-export async function removeSession(connection: Connection,
-                                    token: string) {
-    const result = db.removeSession(connection, token)
-    if (! result) throw new Error("Session not found")
+export async function removeSession(
+    connection: Connection,
+    userId: number,
+    token: string
+): Promise<Result<null>> {
+    return db.removeSession(connection, userId, token)
+        .then(res => res.rowCount == 0
+                   ? Failure(ErrorType.AuthenticationError)
+                   : Success(null))
+        .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 

@@ -3,7 +3,7 @@ import httpError from 'http-errors';
 import express, { ErrorRequestHandler, Router } from 'express';
 import bodyParser from 'body-parser';
 import { Connection } from './db';
-import { addUser, userBySessionToken,
+import { addUser, getUserBySessionToken,
          addSession, removeSession,
          addFolder, removeFolder, updateFolder,
          addFeed, removeFeed, updateFeed,
@@ -40,7 +40,7 @@ function requireSession(connection: Connection): NextHandleFunction {
 
         // @ts-ignore: TS2345: Argument of type 'string | string[]' is not
         //             assignable to parameter of type 'string'.
-        userBySessionToken(connection, token)
+        getUserBySessionToken(connection, token)
             .then(user => {
                 // @ts-ignore: TS2339: Property 'token' does not exist on type
                 //             'IncomingMessage'.

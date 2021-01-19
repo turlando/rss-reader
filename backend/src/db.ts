@@ -92,36 +92,52 @@ export function getUserByUsername(
 }
 
 
-export function userBySessionToken(connection: Connection,
-                                   token: string) {
-    const q = "SELECT users.* " +
-              "  FROM users, sessions " +
-              " WHERE users.id = sessions.user_id " +
-              "   AND sessions.token = $1"
-    return connection.query(q, [token])
-        .then(res => res.rows[0])
+export function getUserBySessionToken(
+    connection: Connection,
+    token: string
+): Promise<QueryResult<UserRow>> {
+    return query<UserRow>(
+        connection,
+        q("SELECT users.*",
+          "  FROM users, sessions",
+          " WHERE users.id = sessions.user_id",
+          "   AND sessions.token = $1"),
+        [token])
 }
 
 
 /* Session ********************************************************************/
 
-export function addSession(connection: Connection,
-                           userId: number) {
-    const q = "INSERT INTO sessions (user_id, token, date) " +
-              "     VALUES ($1, $2, NOW()) " +
-              "  RETURNING token"
-    const query = {text: q,
-                   values: [userId, uuid()],
-                   rowMode: 'array'}
-    return connection.query(query).then(res => res.rows[0][0])
+export interface SessionRow {
+    user_id: number;
+    token: string;
+    date: Date;
+}
+
+export function addSession(
+    connection: Connection,
+    userId: number
+): Promise<QueryResult<SessionRow>> {
+    return query<SessionRow>(
+        connection,
+        q("INSERT INTO sessions (user_id, token, date)",
+          "     VALUES ($1, $2, NOW())",
+          "  RETURNING token"),
+          [userId, uuid()])
 }
 
 
-export function removeSession(connection: Connection,
-                              token: string) {
-    const q = "DELETE FROM sessions " +
-              "      WHERE token = $1 "
-    return connection.query(q, [token]).then(res => !!res.rowCount)
+export function removeSession(
+    connection: Connection,
+    userId: number,
+    token: string
+): Promise<QueryResult> {
+    return query(
+        connection,
+        q("DELETE FROM sessions",
+          "      WHERE user_id = $1",
+          "        AND token   = $2"),
+        [userId, token])
 }
 
 
