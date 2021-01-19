@@ -46,6 +46,7 @@ export function Failure(error: ErrorType): Failure {
     }
 }
 
+
 export type Result<T> = Success<T> | Failure
 
 
@@ -123,7 +124,6 @@ export async function getUserBySessionToken(
 
 /* Session ********************************************************************/
 
-
 export interface Session {
     userId: number;
     token: string;
@@ -185,7 +185,6 @@ export async function removeSession(
 
 
 /* Folder *********************************************************************/
-
 
 export interface Folder {
     id: number;
@@ -405,8 +404,7 @@ export enum TreeElementType {
 
 export type TreeFolder = Folder & { type: TreeElementType.Folder, children: Tree[] }
 export type TreeFeed   = Feed   & { type: TreeElementType.Feed }
-
-export type Tree = TreeFolder | TreeFeed
+export type Tree       = TreeFolder | TreeFeed
 
 
 export function TreeFolder(
