@@ -15,7 +15,13 @@ CREATE TABLE IF NOT EXISTS folders (
   , user_id           INTEGER  REFERENCES users (id)                      NOT NULL
   , name              TEXT                                                NOT NULL
   , parent_folder_id  INTEGER  REFERENCES folders (id) ON DELETE CASCADE
-  , UNIQUE (user_id, name)
+  , UNIQUE (user_id, name, parent_folder_id)
+);
+
+CREATE UNIQUE INDEX idx_folders_unique ON folders (
+    user_id
+  , name
+  , (parent_folder_id IS NULL)
 );
 
 CREATE TABLE IF NOT EXISTS feeds (

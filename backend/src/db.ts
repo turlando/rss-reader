@@ -180,8 +180,8 @@ export async function getFoldersByParent(
         "  FROM folders",
         " WHERE folders.user_id = $1",
         "   AND folders.parent_folder_id", parentId === undefined
-            ? "IS NULL"
-            : "= $2")
+                                         ? "IS NULL"
+                                         : "= $2")
 
     const p = parentId === undefined
         ? [userId]
@@ -214,8 +214,8 @@ export function removeFolder(
     connection: Connection,
     id: number,
     userId: number
-): Promise<QueryResult<FolderRow>> {
-    return query<FolderRow>(
+): Promise<QueryResult> {
+    return query(
         connection,
         q("DELETE FROM folders",
           "      WHERE folders.id = $1",

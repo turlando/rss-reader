@@ -125,6 +125,7 @@ function makeSessionRouter(connection: Connection): Router {
                   return addSession(connection, username, password)
                       .then(session => makeResponse(res, session))
               })
+
         .delete('/',
                 requireSession(connection),
                 (req, res, next) => {
@@ -141,34 +142,28 @@ function makeFolderRouter(connection: Connection): Router {
               requireParams("name", "parent"),
               (req, res, next) => {
                   const { name, parent } = req.body
-                  // @ts-ignore: TS2339: Property 'user' does not exist on type
-                  //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-                  addFolder(connection, req.user.id, name, parent)
-                      .then(() => res.status(200).send())
-                      .catch(err => next(httpError(400, err)))
+                  return addFolder(connection, req.user.id, name, parent)
+                      .then(folder => makeResponse(res, folder))
               })
-        .delete('/:id',
-                requireSession(connection),
-                (req, res, next) => {
-                    // @ts-ignore: TS2339: Property 'token' does not exist on type
-                    //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-                    removeFolder(connection, req.params.id, req.user.id)
-                        .then(() => res.status(200).send())
-                        .catch(err => next(httpError(404, err)))
-                })
+
         .put('/:id(\\d+)',
              requireSession(connection),
              requireParams("name", "parent"),
              (req, res, next) => {
+                 const id = Number(req.params.id)
                  const { name, parent } = req.body
-                 // @ts-ignore: TS2345: Argument of type 'string' is not
-                 //             assignable to parameter of type 'number'.
-                 // @ts-ignore: TS2339: Property 'user' does not exist on type
-                 //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-                 updateFolder(connection, req.params.id, req.user.id, name, parent)
-                     .then(() => res.status(200).send())
-                     .catch(err => next(httpError(404, err)))
+                 return updateFolder(connection, id, req.user.id,
+                                     name, parent)
+                     .then(folder => makeResponse(res, folder))
              })
+
+        .delete('/:id',
+                requireSession(connection),
+                (req, res, next) => {
+                    const id = Number(req.params.id)
+                    return removeFolder(connection, id, req.user.id)
+                        .then(_ => makeResponse(res, _))
+                })
 }
 
 

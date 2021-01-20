@@ -215,7 +215,9 @@ export function addFolder(
 ): Promise<Result<Folder>> {
     return db.addFolder(connection, userId, name, parentFolderId)
         .then(res => Success(folderRowToFolder(res.rows[0])))
-        .catch(err => Failure(ErrorType.DatabaseError))
+        .catch(err => err.code == '23505' // unique_violation
+                    ? Failure(ErrorType.Duplicate)
+                    : Failure(ErrorType.DatabaseError))
 }
 
 
@@ -248,11 +250,11 @@ export async function removeFolder(
     connection: Connection,
     id: number,
     userId: number
-): Promise<Result<Folder>> {
+): Promise<Result<null>> {
     return db.removeFolder(connection, id, userId)
         .then(res => res.rowCount === 0
             ? Failure(ErrorType.NotFound)
-            : Success(folderRowToFolder(res.rows[0])))
+            : Success(null))
         .catch(err => Failure(ErrorType.DatabaseError))
 }
 
