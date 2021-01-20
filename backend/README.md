@@ -220,7 +220,7 @@ Authentication through session token is required.
   * **Code**: 200
 
 * **Error responses**:
-  * ***Token not valid**
+  * ***Token not valid***
     * **Code**: 401
 
   * ***Folder does not exist***

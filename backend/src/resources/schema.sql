@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS folders (
   , UNIQUE (user_id, name, parent_folder_id)
 );
 
-CREATE UNIQUE INDEX idx_folders_unique ON folders (
+CREATE UNIQUE INDEX IF NOT EXISTS idx_folders_unique ON folders (
     user_id
   , name
   , (parent_folder_id IS NULL)

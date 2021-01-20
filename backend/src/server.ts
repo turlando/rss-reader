@@ -227,7 +227,7 @@ export function run(connection: Connection) {
         .use('/session', makeSessionRouter(connection))
         .use('/folder', makeFolderRouter(connection))
         .use('/feed', makeFeedRouter(connection))
-        .use((req, res, next) => next(httpError(404))) // Catchall / default route
-        .use(errorHandler) // Default error handler
+        .use((req, res, next) => res.status(404).send()) // Default route
+        .use(errorHandler)                               // Default error handler
         .listen(DEFAULT_PORT)
 }
