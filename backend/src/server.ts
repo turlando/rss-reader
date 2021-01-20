@@ -1,3 +1,4 @@
+import * as log from 'loglevel';
 import httpError from 'http-errors';
 import express, {
     Router, Response,
@@ -15,6 +16,8 @@ import { Result, ErrorType,
 import { getHeaderValue } from './utils';
 
 
+/* Types *********************************************************************/
+
 declare global {
     namespace Express {
         interface Request {
@@ -25,8 +28,14 @@ declare global {
 }
 
 
-const DEFAULT_PORT = 8000
+/* Constants ******************************************************************/
 
+const LOGGER = log.getLogger(module.id)
+
+
+/* Defaults ******************************************************************/
+
+const DEFAULT_PORT = 8000
 
 
 /* API helpers ***************************************************************/
@@ -46,11 +55,14 @@ function makeResponse<T>(response: Response, result: Result<T>): Response {
     return response.status(200).send(result.data)
 }
 
+
 /* Middlewares ***************************************************************/
 
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-    console.error("server.errorHandler:", err, "\n")
-    res.status(err.status || 500).send()
+    LOGGER.error("Uncaught exception while processing request\n",
+                 "Request: ", req, "\n",
+                 "Error: ", res)
+    return res.status(err.status || 500).send()
 }
 
 

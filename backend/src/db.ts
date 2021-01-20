@@ -1,18 +1,24 @@
+import * as log from 'loglevel';
 import { Pool, QueryResult } from 'pg';
 import { v4 as uuid } from 'uuid';
-import * as log from 'loglevel';
 import * as resources from './resources';
 import { q } from './utils';
 
 
+/* Types **********************************************************************/
+
 export type Connection = Pool
 
 
-const LOGGER = log.getLogger(module.id)
+/* Constants ******************************************************************/
 
+const LOGGER = log.getLogger(module.id)
 
 const SCHEMA_FILE = resources.read('schema.sql')
 const SCHEMA_STATEMENTS = SCHEMA_FILE.split(';')
+
+
+/* Defaults *******************************************************************/
 
 const DEFAULT_HOST = '127.0.0.1'
 const DEFAULT_PORT = 5432
