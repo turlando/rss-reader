@@ -1,17 +1,50 @@
-import { NextHandleFunction } from 'connect';
 import httpError from 'http-errors';
-import express, { ErrorRequestHandler, Router } from 'express';
+import express, {
+    Router, Response,
+    RequestHandler, ErrorRequestHandler
+} from 'express';
 import bodyParser from 'body-parser';
 import { Connection } from './db';
-import { addUser, getUserBySessionToken,
+import { Result, ErrorType,
+         User, addUser, getUserBySessionToken,
          addSession, removeSession,
          addFolder, removeFolder, updateFolder,
          addFeed, removeFeed, updateFeed,
-         updateItems } from './api';
+         updateItems,
+         ResultType} from './api';
+import { getHeaderValue } from './utils';
+
+
+declare global {
+    namespace Express {
+        interface Request {
+            token: string;
+            user: User;
+        }
+    }
+}
 
 
 const DEFAULT_PORT = 8000
 
+
+
+/* API helpers ***************************************************************/
+
+const ERROR_TYPE_TO_HTTP_CODE: Record<ErrorType, number> = {
+    [ErrorType.DatabaseError]: 500,
+    [ErrorType.AuthenticationError]: 401,
+    [ErrorType.NotFound]: 404,
+    [ErrorType.Duplicate]: 409
+}
+
+
+function makeResponse<T>(response: Response, result: Result<T>): Response {
+    if (result.result == ResultType.Failure)
+        return response.status(ERROR_TYPE_TO_HTTP_CODE[result.error]).send()
+
+    return response.status(200).send(result.data)
+}
 
 /* Middlewares ***************************************************************/
 
@@ -21,10 +54,8 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 }
 
 
-function requireParams(...params: string[]): NextHandleFunction {
+function requireParams(...params: string[]): RequestHandler {
     return (req, res, next) => {
-        // @ts-ignore: TS2339: Property 'body' does not exist on type
-        //             'IncomingMessage'.
         if (params.every(k => k in req.body))
             next()
         else
@@ -33,24 +64,21 @@ function requireParams(...params: string[]): NextHandleFunction {
 }
 
 
-function requireSession(connection: Connection): NextHandleFunction {
+function requireSession(connection: Connection): RequestHandler {
     return (req, res, next) => {
-        const token = req.headers['x-token']
+        const token = getHeaderValue(req.headers['x-token'])
         if (! token) return next(httpError(401, "Unauthorized"))
 
-        // @ts-ignore: TS2345: Argument of type 'string | string[]' is not
-        //             assignable to parameter of type 'string'.
-        getUserBySessionToken(connection, token)
+        return getUserBySessionToken(connection, token)
             .then(user => {
-                // @ts-ignore: TS2339: Property 'token' does not exist on type
-                //             'IncomingMessage'.
+                if (user.result == ResultType.Failure)
+                    return next(httpError(401, user.error))
+
                 req.token = token
-                // @ts-ignore: TS2339: Property 'user' does not exist on type
-                //             'IncomingMessage'.
-                req.user = user
-                next()
+                req.user = user.data
+
+                return next()
             })
-            .catch(err => next(httpError(401, err)))
     }
 }
 
@@ -59,11 +87,12 @@ function requireSession(connection: Connection): NextHandleFunction {
 
 function makeUserRouter(connection: Connection): Router {
     return Router()
-        .post('/', requireParams("username", "password"), (req, res, next) => {
-            const {username, password} = req.body
-            addUser(connection, username, password)
-                .then(() => res.status(200).send())
-                .catch(err => next(httpError(500, err)))
+        .post('/',
+              requireParams("username", "password"),
+              (req, res, next) => {
+                  const { username, password } = req.body
+                  addUser(connection, username, password)
+                      .then(user => makeResponse(res, user))
         })
 }
 

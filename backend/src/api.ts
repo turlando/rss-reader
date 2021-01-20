@@ -28,8 +28,9 @@ export function Success<T>(data: T): Success<T> {
 
 export enum ErrorType {
     DatabaseError = "database_error",
+    AuthenticationError = "authentication_error",
     NotFound = "not_found",
-    AuthenticationError = "authentication_error"
+    Duplicate = "duplicate"
 }
 
 
@@ -57,31 +58,28 @@ const BCRYPT_SALT_ROUNDS = 10
 
 /* User ***********************************************************************/
 
-interface User {
+export interface User {
     id: number;
     username: string;
-    passwordHash: string;
 }
 
 
-function User(
-    id: number,
-    username: string,
-    passwordHash: string
-): User {
-    return {
-        id: id,
-        username: username,
-        passwordHash: passwordHash
-    }
-}
+type _User = User & { passwordHash: string }
 
 
-function userRowToUser(r: db.UserRow): User {
+function userRowToUser(r: db.UserRow): _User {
     return {
         id: r.id,
         username: r.username,
         passwordHash: r.password
+    }
+}
+
+
+function userRowToPublicUser(r: db.UserRow): User {
+    return {
+        id: r.id,
+        username: r.username
     }
 }
 
@@ -93,15 +91,17 @@ export async function addUser(
 ): Promise<Result<User>> {
     const hashedPassword = await bcrypt.hash(plaintextPassword, BCRYPT_SALT_ROUNDS)
     return db.addUser(connection, username, hashedPassword)
-        .then(res => Success(userRowToUser(res.rows[0])))
-        .catch(err => Failure(ErrorType.DatabaseError))
+        .then(res => Success(userRowToPublicUser(res.rows[0])))
+        .catch(err => err.code == '23505' // unique_violation
+                    ? Failure(ErrorType.Duplicate)
+                    : Failure(ErrorType.DatabaseError))
 }
 
 
-export function getUserByUsername(
+function getUserByUsername(
     connection: Connection,
     username: string
-): Promise<Result<User>> {
+): Promise<Result<_User>> {
     return db.getUserByUsername(connection, username)
         .then(res => res.rowCount == 0
                    ? Success(userRowToUser(res.rows[0]))
@@ -477,7 +477,8 @@ export async function getSubscriptions(
         if (! isTreeFolderArraySuccess(subtree))
             return Failure(ErrorType.DatabaseError)
 
-        return Success([...subtree.map(f => f.data), ...feeds.data.map(feedToTreeFeed)])
+        return Success([...subtree.map(f => f.data),
+                        ...feeds.data.map(feedToTreeFeed)])
     }
 
     return await getSubtree()
