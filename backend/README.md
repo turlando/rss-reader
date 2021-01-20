@@ -1,10 +1,18 @@
 # rss-reader-backend
 
-## Run
+## Running
+
+Requirements:
+
+* Docker and docker-compose
+* Node.js 15 or better
+* npm 6 or better
+
 ```
-mkdir pgdata
-docker-compose-up -d
-npm run start
+mkdir pgdata                    # create PostgreSQL database folder
+docker-compose-up -d            # start local database
+npm install --production=false  # install dependencies
+npm run start                   # start http server
 ```
 
 ## Endpoints
@@ -138,7 +146,7 @@ Create a new folder. Authentication through session token is required.
   ```
 
 * **Error responses**:
-  * ***Token not valid**
+  * ***Token not valid***
     * **Code**: 401
 
   * ***Folder already exists***
@@ -183,7 +191,7 @@ Update an existing folder. Authentication through session token is required.
   ```
 
 * **Error responses**:
-  * ***Token not valid**
+  * ***Token not valid***
     * **Code**: 401
 
   * ***Folder does not exist***
@@ -267,7 +275,7 @@ Create a new feed. Authentication through session token is required.
   ```
 
 * **Error responses**:
-  * ***Token not valid**
+  * ***Token not valid***
     * **Code**: 401
 
   * ***Feed already exists***
@@ -314,7 +322,7 @@ Update an existing feed. Authentication through session token is required.
   ```
 
 * **Error responses**:
-  * ***Token not valid**
+  * ***Token not valid***
     * **Code**: 401
 
   * ***Folder does not exist***
@@ -425,6 +433,8 @@ Retrieve feed updates. Authentication through session token is required.
        -H 'X-Token: ...'                   \
        http://127.0.0.1:8000/feed/16/update
   ```
+
+### /subscriptions
 
 #### GET /subscriptions
 
