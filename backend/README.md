@@ -366,3 +366,111 @@ Authentication through session token is required.
        -H 'X-Token: ...'                       \
        http://127.0.0.1:8000/feed/16
   ```
+
+#### GET /feed/{id}/items
+
+Get items for feed. Authentication through session token is required.
+
+* **Headers**:
+  * `X-Token`: string
+  
+* **URL parameters**:
+  * `id`: number
+
+* **Success response**:
+  * **Code**: 200
+  * **Body**: TODO
+
+* **Error responses**:
+  * ***Token not valid***
+    * **Code**: 401
+
+   * ***Database error***
+     * **Code**: 500
+
+* **Example**:
+  ```
+  curl -v                                  \
+       -X GET                              \
+       -H 'Content-Type: application/json' \
+       -H 'X-Token: ...'                   \
+       http://127.0.0.1:8000/feed/16/items
+  ```
+
+#### POST /feed/{id}/update
+
+Retrieve feed updates. Authentication through session token is required.
+
+* **Headers**:
+  * `X-Token`: string
+  
+* **URL parameters**:
+  * `id`: number
+
+* **Success response**:
+  * **Code**: 200
+
+* **Error responses**:
+  * ***Token not valid***
+    * **Code**: 401
+
+   * ***Database error***
+     * **Code**: 500
+
+* **Example**:
+  ```
+  curl -v                                  \
+       -X POST                             \
+       -H 'Content-Type: application/json' \
+       -H 'X-Token: ...'                   \
+       http://127.0.0.1:8000/feed/16/update
+  ```
+
+#### GET /subscriptions
+
+Retrieve folders and feeds tree. Authentication through session token is
+required.
+
+* **Headers**:
+  * `X-Token`: string
+  
+* **Success response**:
+  * **Code**: 200
+  * **Body**:
+    ```
+    [
+        {
+            "type": "folder",
+            "id": 4,
+            "name": "tech",
+            "parentfolderid": null,
+            "children": [
+                {
+                    "type": "feed",
+                    "id": 2,
+                    "url": "http://rss.slashdot.org/slashdot/slashdotmain",
+                    "title": "slashdot", "link":"https://slashdot.org/",
+                    "description": "news for nerds, stuff that matters",
+                    "folderid":4
+                }
+            ]
+        }
+    ]
+
+    ```
+
+* **Error responses**:
+  * ***Token not valid***
+    * **Code**: 401
+
+   * ***Database error***
+     * **Code**: 500
+
+* **Example**:
+  ```
+  curl -v                                  \
+       -X GET                              \
+       -H 'Content-Type: application/json' \
+       -H 'X-Token: ...'                   \
+       http://127.0.0.1:8000/subscriptions
+  ```

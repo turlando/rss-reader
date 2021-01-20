@@ -12,7 +12,8 @@ import { Result, ErrorType,
          addFolder, removeFolder, updateFolder,
          addFeed, removeFeed, updateFeed,
          getItemsByFeed, updateItems,
-         ResultType} from './api';
+    ResultType,
+    getSubscriptions} from './api';
 import { getHeaderValue } from './utils';
 
 
@@ -213,6 +214,17 @@ function makeFeedRouter(connection: Connection): Router {
 }
 
 
+function makeSubscriptionsRouter(connection: Connection): Router {
+    return Router()
+        .get('/',
+              requireSession(connection),
+              (req, res, next) => {
+                  return getSubscriptions(connection, req.user.id)
+                      .then(subscriptions => makeResponse(res, subscriptions))
+              })
+}
+
+
 /* Entrypoint *****************************************************************/
 
 export function run(connection: Connection) {
@@ -222,6 +234,7 @@ export function run(connection: Connection) {
         .use('/session', makeSessionRouter(connection))
         .use('/folder', makeFolderRouter(connection))
         .use('/feed', makeFeedRouter(connection))
+        .use('/subscriptions', makeSubscriptionsRouter(connection))
         .use((req, res, next) => res.status(404).send()) // Default route
         .use(errorHandler)                               // Default error handler
         .listen(DEFAULT_PORT)
