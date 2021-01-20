@@ -98,7 +98,7 @@ export async function addUser(
 }
 
 
-function getUserByUsername(
+async function getUserByUsername(
     connection: Connection,
     username: string
 ): Promise<Result<_User>> {
@@ -207,7 +207,7 @@ function folderRowToFolder(r: db.FolderRow): Folder {
 }
 
 
-export function addFolder(
+export async function addFolder(
     connection: Connection,
     userId: number,
     name: string,
@@ -221,7 +221,7 @@ export function addFolder(
 }
 
 
-export function getFoldersByParent(
+export async function getFoldersByParent(
     connection: Connection,
     userId: number,
     parentId?: number
@@ -231,7 +231,7 @@ export function getFoldersByParent(
 }
 
 
-export function updateFolder(
+export async function updateFolder(
     connection: Connection,
     id: number,
     userId: number,
@@ -305,7 +305,9 @@ export async function addFeed(
     const feed = await rss.parseURL(url)
 
     return db.addFeed(connection, userId, url,
-                      feed.title || "", feed.link || "", feed.description || "",
+                      feed.title || "",
+                      feed.link || "",
+                      feed.description || "",
                       folderId)
         .then(res => {
             const feed = feedRowToFeed(res.rows[0])
@@ -313,7 +315,9 @@ export async function addFeed(
                 .then(_ => Success(feed))
                 .catch(err => Failure(ErrorType.DatabaseError))
         })
-        .catch(err => Failure(ErrorType.DatabaseError))
+        .catch(err => err.code == '23505' // unique_violation
+                    ? Failure(ErrorType.Duplicate)
+                    : Failure(ErrorType.DatabaseError))
 }
 
 
@@ -358,16 +362,66 @@ export async function removeFeed(
     connection: Connection,
     id: number,
     userId: number
-): Promise<Result<Feed>> {
+): Promise<Result<null>> {
     return db.removeFeed(connection, id, userId)
         .then(res => res.rowCount == 0
-            ? Success(feedRowToFeed(res.rows[0]))
-            : Failure(ErrorType.NotFound))
+            ? Failure(ErrorType.NotFound)
+            : Success(null))
         .catch(err => Failure(ErrorType.DatabaseError))
 }
 
 
 /* Item ***********************************************************************/
+
+export interface Item {
+    id: number;
+    feedId: number;
+    guid: string;
+    title: string;
+    description: string;
+    link: string;
+    date: Date;
+}
+
+
+export function Item(
+    id: number,
+    feedId: number,
+    guid: string,
+    title: string,
+    description: string,
+    link: string,
+    date: Date
+): Item {
+    return {
+        id: id,
+        feedId: feedId,
+        guid: guid,
+        title: title,
+        description: description,
+        link: link,
+        date: date
+    }
+}
+
+
+function itemRowToItem(row: db.ItemRow) {
+    return Item(row.id, row.feed_id, row.guid,
+                row.title, row.description, row.link,
+                row.date)
+}
+
+
+export async function getItemsByFeed(
+    connection: Connection,
+    feedId: number,
+    userId: number
+): Promise<Result<Item[]>> {
+    return db.getItemsByFeed(connection, feedId, userId)
+        .then(items => Success(items.rows.map(itemRowToItem)))
+        .catch(err => Failure(ErrorType.DatabaseError))
+}
+
 
 export async function updateItems(
     connection: Connection,

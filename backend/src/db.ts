@@ -251,7 +251,7 @@ export function addFeed(
         connection,
         q("INSERT INTO feeds (user_id, folder_id, url, title, link, description)",
           "     VALUES ($1, $2, $3, $4, $5, $6)",
-          "  RETURNING id"),
+          "  RETURNING *"),
         [userId, folderId, url, title, link, description]
     )
 }
@@ -335,6 +335,23 @@ export interface ItemRow {
 }
 
 
+export function getItemsByFeed(
+    connection: Connection,
+    feedId: number,
+    userId: number
+): Promise<QueryResult<ItemRow>> {
+    return query<ItemRow>(
+        connection,
+        q("SELECT items.*",
+          "  FROM items, feeds",
+          " WHERE items.feed_id = feeds.id",
+          "   AND items.feed_id = $1",
+          "   AND feeds.user_id = $2"),
+        [feedId, userId]
+    )
+}
+
+
 export function upsertItem(
     connection: Connection,
     feedId: number,
@@ -348,8 +365,9 @@ export function upsertItem(
         connection,
         q("  INSERT INTO items (feed_id, guid, title, description, link, date)",
           "       VALUES ($1, $2, $3, $4, $5, $6)",
-          "  ON CONFLICT (feed_id, guid)",
-          "DO UPDATE SET title = $3",
+          "  ON CONFLICT (feed_id, link)",
+          "DO UPDATE SET guid = $2",
+          "            , title = $3",
           "            , description = $4",
           "            , link = $5",
           "            , date = $6",

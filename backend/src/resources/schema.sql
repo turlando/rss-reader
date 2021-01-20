@@ -15,7 +15,6 @@ CREATE TABLE IF NOT EXISTS folders (
   , user_id           INTEGER  REFERENCES users (id)                      NOT NULL
   , name              TEXT                                                NOT NULL
   , parent_folder_id  INTEGER  REFERENCES folders (id) ON DELETE CASCADE
-  , UNIQUE (user_id, name, parent_folder_id)
 );
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_folders_unique ON folders (
@@ -26,12 +25,13 @@ CREATE UNIQUE INDEX IF NOT EXISTS idx_folders_unique ON folders (
 
 CREATE TABLE IF NOT EXISTS feeds (
     id           INTEGER  PRIMARY KEY GENERATED ALWAYS AS IDENTITY
-  , user_id      INTEGER  REFERENCES users (id)                     NOT NULL
-  , folder_id    INTEGER  REFERENCES folders (id)
-  , url          TEXT                                               NOT NULL
-  , title        TEXT                                               NOT NULL
-  , link         TEXT                                               NOT NULL
-  , description  TEXT                                               NOT NULL
+  , user_id      INTEGER  REFERENCES users (id)                      NOT NULL
+  , folder_id    INTEGER  REFERENCES folders (id) ON DELETE CASCADE
+  , url          TEXT                                                NOT NULL
+  , title        TEXT                                                NOT NULL
+  , link         TEXT                                                NOT NULL
+  , description  TEXT                                                NOT NULL
+  , UNIQUE (user_id, url)
 );
 
 CREATE TABLE IF NOT EXISTS items (
@@ -42,5 +42,5 @@ CREATE TABLE IF NOT EXISTS items (
   , description  TEXT                                                  NOT NULL
   , link         TEXT                                                  NOT NULL
   , date         TIMESTAMPTZ                                           NOT NULL
-  , UNIQUE (feed_id, guid)
+  , UNIQUE (feed_id, link)
 );

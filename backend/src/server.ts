@@ -11,7 +11,7 @@ import { Result, ErrorType,
          addSession, removeSession,
          addFolder, removeFolder, updateFolder,
          addFeed, removeFeed, updateFeed,
-         updateItems,
+         getItemsByFeed, updateItems,
          ResultType} from './api';
 import { getHeaderValue } from './utils';
 
@@ -174,46 +174,41 @@ function makeFeedRouter(connection: Connection): Router {
               requireParams("url", "folder"),
               (req, res, next) => {
                   const { url, folder } = req.body
-                  // @ts-ignore: TS2339: Property 'user' does not exist on type
-                  //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-                  addFeed(connection, req.user.id, url, folder)
-                      .then(() => res.status(200).send())
-                      .catch(err => next(httpError(400, err)))
+                  return addFeed(connection, req.user.id, url, folder)
+                      .then(feed => makeResponse(res, feed))
               })
-        .delete('/:id(\\d+)',
-                requireSession(connection),
-                (req, res, next) => {
-                    // @ts-ignore: TS2345: Argument of type 'string' is not
-                    //             assignable to parameter of type 'number'.
-                    // @ts-ignore: TS2339: Property 'user' does not exist on type
-                    //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-                    removeFeed(connection, req.params.id, req.user.id)
-                        .then(() => res.status(200).send())
-                        .catch(err => next(httpError(404, err)))
-                })
+
         .put('/:id(\\d+)',
              requireSession(connection),
              requireParams("folder"),
              (req, res, next) => {
-                 const { folder } = req.body
-                 // @ts-ignore: TS2345: Argument of type 'string' is not
-                 //             assignable to parameter of type 'number'.
-                 // @ts-ignore: TS2339: Property 'user' does not exist on type
-                 //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-                 updateFeed(connection, req.params.id, req.user.id, folder)
-                     .then(() => res.status(200).send())
-                     .catch(err => next(httpError(400, err)))
+                 const id = Number(req.params.id)
+                 return updateFeed(connection, id, req.user.id, req.body.folder)
+                     .then(feed => makeResponse(res, feed))
              })
+
+        .delete('/:id(\\d+)',
+                requireSession(connection),
+                (req, res, next) => {
+                    const id = Number(req.params.id)
+                    return removeFeed(connection, id, req.user.id)
+                        .then(_ => makeResponse(res, _))
+                })
+
+        .get('/:id/items',
+             requireSession(connection),
+             (req, res, next) => {
+                 const id = Number(req.params.id)
+                 return getItemsByFeed(connection, id, req.user.id)
+                     .then(items => makeResponse(res, items))
+             })
+
         .post('/:id(\\d+)/update',
               requireSession(connection),
               (req, res, next) => {
-                  // @ts-ignore: TS2345: Argument of type 'string' is not
-                  //             assignable to parameter of type 'number'.
-                  // @ts-ignore: TS2339: Property 'user' does not exist on type
-                  //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-                  updateItems(connection, req.params.id, req.user.id)
-                      .then(() => res.status(200).send())
-                      .catch(err => next(httpError(400, err)))
+                  const id = Number(req.params.id)
+                  return updateItems(connection, id, req.user.id)
+                      .then(_ => makeResponse(res, _))
               })
 }
 

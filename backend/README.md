@@ -1,13 +1,11 @@
 # rss-reader-backend
 
-
 ## Run
 ```
 mkdir pgdata
 docker-compose-up -d
 npm run start
 ```
-
 
 ## Endpoints
 
@@ -89,7 +87,7 @@ Create a new session. Authentication through username and password is required.
 
 #### DELETE /session
 
-Delete an existing session. Authentication through X-Token header is required.
+Delete an existing session. Authentication through session token is required.
 
 * **Headers**:
   * `X-Token`: string
@@ -119,7 +117,7 @@ Manage personal folders.
 
 #### POST /folder
 
-Create a new session. Authentication through session token is required.
+Create a new folder. Authentication through session token is required.
 
 * **Headers**:
   * `X-Token`: string
@@ -161,7 +159,7 @@ Create a new session. Authentication through session token is required.
 
 #### PUT /folder/{id}
 
-Create a new session. Authentication through session token is required.
+Update an existing folder. Authentication through session token is required.
 
 * **Headers**:
   * `X-Token`: string
@@ -237,4 +235,134 @@ Authentication through session token is required.
        -H 'X-Token: ...'                       \
        --data '{"name": "News", "parent": 42}' \
        http://127.0.0.1:8000/session
+  ```
+
+### /feed
+
+Manage personal feeds.
+
+#### POST /feed
+
+Create a new feed. Authentication through session token is required.
+
+* **Headers**:
+  * `X-Token`: string
+
+* **Parameters**:
+  * `url`: string
+  * `folder`: number or null
+
+* **Success response**:
+  * **Code**: 200
+  * **Body**:
+  ```
+  {
+      "id": 4,
+      "url": "https://www.ansa.it/sito/ansait_rss.xml",
+      "title": "RSS di   - ANSA.it",
+      "link": "http://www.ansa.it/",
+      "description": "Updated every day - FOR PERSONAL USE ONLY",
+      "folderId": 3
+  }
+  ```
+
+* **Error responses**:
+  * ***Token not valid**
+    * **Code**: 401
+
+  * ***Feed already exists***
+    * **Code**: 409
+
+   * ***Database error***
+     * **Code**: 500
+
+* **Example**:
+  ```
+  curl -v                                                                       \
+       -X POST                                                                  \
+       -H 'Content-Type: application/json'                                      \
+       -H 'X-Token: ...'                                                        \
+       --data '{"url": "https://www.ansa.it/sito/ansait_rss.xml", "folder": 3}' \
+       http://127.0.0.1:8000/feed
+  ```
+
+#### PUT /feed/{id}
+
+Update an existing feed. Authentication through session token is required.
+
+* **Headers**:
+  * `X-Token`: string
+
+* **URL parameters**:
+  * `id`: number
+
+* **Parameters**:
+  * `parent`: number or null
+
+* **Success response**:
+  * **Code**: 200
+  * **Body**:
+  ```
+  {
+      "id": 4,
+      "url": "https://www.ansa.it/sito/ansait_rss.xml",
+      "title": "RSS di   - ANSA.it",
+      "link": "http://www.ansa.it/",
+      "description": "Updated every day - FOR PERSONAL USE ONLY",
+      "folderId": null
+  }
+  ```
+
+* **Error responses**:
+  * ***Token not valid**
+    * **Code**: 401
+
+  * ***Folder does not exist***
+    * **Code**: 404
+
+   * ***Database error***
+     * **Code**: 500
+
+* **Example**:
+  ```
+  curl -v                                                                          \
+       -X PUT                                                                      \
+       -H 'Content-Type: application/json'                                         \
+       -H 'X-Token: ...'                                                           \
+       --data '{"url": "https://www.ansa.it/sito/ansait_rss.xml", "folder": null}' \
+       http://127.0.0.1:8000/feed/4
+  ```
+ 
+#### DELETE /feed/{id}
+
+Remove an existing feed. Its items will be removed too.
+
+Authentication through session token is required.
+
+* **Headers**:
+  * `X-Token`: string
+  
+* **URL parameters**:
+  * `id`: number
+
+* **Success response**:
+  * **Code**: 200
+
+* **Error responses**:
+  * ***Token not valid***
+    * **Code**: 401
+
+  * ***Folder does not exist***
+    * **Code**: 404
+
+   * ***Database error***
+     * **Code**: 500
+
+* **Example**:
+  ```
+  curl -v                                      \
+       -X DELETE \
+       -H 'Content-Type: application/json'     \
+       -H 'X-Token: ...'                       \
+       http://127.0.0.1:8000/feed/16
   ```
