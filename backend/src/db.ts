@@ -128,22 +128,20 @@ export function addSession(
         connection,
         q("INSERT INTO sessions (user_id, token, date)",
           "     VALUES ($1, $2, NOW())",
-          "  RETURNING token"),
+          "  RETURNING *"),
           [userId, uuid()])
 }
 
 
 export function removeSession(
     connection: Connection,
-    userId: number,
     token: string
 ): Promise<QueryResult> {
     return query(
         connection,
         q("DELETE FROM sessions",
-          "      WHERE user_id = $1",
-          "        AND token   = $2"),
-        [userId, token])
+          "      WHERE token = $1"),
+        [token])
 }
 
 

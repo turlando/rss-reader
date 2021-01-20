@@ -1,3 +1,4 @@
+import * as log from 'loglevel';
 import { Connection } from './db'
 import * as db from './db'
 import { run } from './server'

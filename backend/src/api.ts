@@ -104,8 +104,8 @@ function getUserByUsername(
 ): Promise<Result<_User>> {
     return db.getUserByUsername(connection, username)
         .then(res => res.rowCount == 0
-                   ? Success(userRowToUser(res.rows[0]))
-                   : Failure(ErrorType.NotFound))
+                   ? Failure(ErrorType.NotFound)
+                   : Success(userRowToUser(res.rows[0])))
         .catch(err => Failure(ErrorType.DatabaseError))
 }
 
@@ -116,8 +116,8 @@ export async function getUserBySessionToken(
 ): Promise<Result<User>> {
     return db.getUserBySessionToken(connection, token)
         .then(res => res.rowCount == 0
-            ? Success(userRowToUser(res.rows[0]))
-            : Failure(ErrorType.AuthenticationError))
+                   ? Failure(ErrorType.AuthenticationError)
+                   : Success(userRowToUser(res.rows[0])))
         .catch(err => Failure(ErrorType.DatabaseError))
 }
 
@@ -127,25 +127,22 @@ export async function getUserBySessionToken(
 export interface Session {
     userId: number;
     token: string;
-    date: Date;
 }
 
 
 function Session(
     userId: number,
     token: string,
-    date: Date
 ): Session {
     return {
         userId: userId,
         token: token,
-        date: date
     }
 }
 
 
 function sessionRowToSession(row: db.SessionRow): Session {
-    return Session(row.user_id, row.token, row.date)
+    return Session(row.user_id, row.token)
 }
 
 
@@ -173,10 +170,9 @@ export async function addSession(
 
 export async function removeSession(
     connection: Connection,
-    userId: number,
     token: string
 ): Promise<Result<null>> {
-    return db.removeSession(connection, userId, token)
+    return db.removeSession(connection, token)
         .then(res => res.rowCount == 0
                    ? Failure(ErrorType.AuthenticationError)
                    : Success(null))

@@ -31,6 +31,7 @@ declare global {
 /* Constants ******************************************************************/
 
 const LOGGER = log.getLogger(module.id)
+LOGGER.enableAll()
 
 
 /* Defaults ******************************************************************/
@@ -61,7 +62,7 @@ function makeResponse<T>(response: Response, result: Result<T>): Response {
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
     LOGGER.error("Uncaught exception while processing request\n",
                  "Request: ", req, "\n",
-                 "Error: ", res)
+                 "Error: ", err)
     return res.status(err.status || 500).send()
 }
 
@@ -69,7 +70,7 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 function requireParams(...params: string[]): RequestHandler {
     return (req, res, next) => {
         if (params.every(k => k in req.body))
-            next()
+            return next()
 
         LOGGER.debug("Request is missing mandatory parameters.")
         res.status(400).send()
@@ -80,7 +81,7 @@ function requireParams(...params: string[]): RequestHandler {
 function requireSession(connection: Connection): RequestHandler {
     return (req, res, next) => {
         const token = getHeaderValue(req.headers['x-token'])
-        if (! token) {
+        if (token == undefined) {
             LOGGER.debug("Request is missing X-Token header")
             return res.status(401).send()
         }
@@ -109,7 +110,7 @@ function makeUserRouter(connection: Connection): Router {
               requireParams("username", "password"),
               (req, res, next) => {
                   const { username, password } = req.body
-                  addUser(connection, username, password)
+                  return addUser(connection, username, password)
                       .then(user => makeResponse(res, user))
         })
 }
@@ -117,18 +118,18 @@ function makeUserRouter(connection: Connection): Router {
 
 function makeSessionRouter(connection: Connection): Router {
     return Router()
-        .post('/', requireParams("username", "password"), (req, res, next) => {
-            const { username, password } = req.body
-            addSession(connection, username, password)
-                .then(token => res.status(200).send(token))
-                .catch(err => next(httpError(401, err)))
-        })
-        .delete('/', requireSession(connection), (req, res, next) => {
-            // @ts-ignore: TS2339: Property 'token' does not exist on type
-            //             'Request<ParamsDictionary, any, any, ParsedQs>'.
-            removeSession(connection, req.token)
-                .then(() => res.status(200).send())
-                .catch(err => next(httpError(404, err)))
+        .post('/',
+              requireParams("username", "password"),
+              (req, res, next) => {
+                  const { username, password } = req.body
+                  return addSession(connection, username, password)
+                      .then(session => makeResponse(res, session))
+              })
+        .delete('/',
+                requireSession(connection),
+                (req, res, next) => {
+                    return removeSession(connection, req.token)
+                        .then(_ => makeResponse(res, _))
         })
 }
 
