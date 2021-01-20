@@ -70,8 +70,9 @@ function requireParams(...params: string[]): RequestHandler {
     return (req, res, next) => {
         if (params.every(k => k in req.body))
             next()
-        else
-            next(httpError(400, "Required params: " + params))
+
+        LOGGER.debug("Request is missing mandatory parameters.")
+        res.status(400).send()
     }
 }
 
@@ -79,12 +80,17 @@ function requireParams(...params: string[]): RequestHandler {
 function requireSession(connection: Connection): RequestHandler {
     return (req, res, next) => {
         const token = getHeaderValue(req.headers['x-token'])
-        if (! token) return next(httpError(401, "Unauthorized"))
+        if (! token) {
+            LOGGER.debug("Request is missing X-Token header")
+            return res.status(401).send()
+        }
 
         return getUserBySessionToken(connection, token)
             .then(user => {
-                if (user.result == ResultType.Failure)
-                    return next(httpError(401, user.error))
+                if (user.result == ResultType.Failure) {
+                    LOGGER.debug("Can't find user for given session token")
+                    return res.status(401).send()
+                }
 
                 req.token = token
                 req.user = user.data
