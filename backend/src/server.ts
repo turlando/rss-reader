@@ -1,4 +1,5 @@
 import * as log from 'loglevel';
+import cors from 'cors';
 import httpError from 'http-errors';
 import express, {
     Router, Response,
@@ -229,6 +230,7 @@ function makeSubscriptionsRouter(connection: Connection): Router {
 
 export function run(connection: Connection) {
     return express()
+        .use(cors())
         .use(bodyParser.json())
         .use('/user', makeUserRouter(connection))
         .use('/session', makeSessionRouter(connection))

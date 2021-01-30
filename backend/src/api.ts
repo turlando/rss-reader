@@ -454,7 +454,8 @@ export enum TreeElementType {
 }
 
 
-export type TreeFolder = Folder & { type: TreeElementType.Folder, children: Tree[] }
+export type TreeFolder = Folder & { type: TreeElementType.Folder,
+                                    children: Tree[] }
 export type TreeFeed   = Feed   & { type: TreeElementType.Feed }
 export type Tree       = TreeFolder | TreeFeed
 
