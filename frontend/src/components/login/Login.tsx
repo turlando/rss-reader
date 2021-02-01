@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
 import {ResultType, login} from '../../api';
-import {setToken } from '../../store/session-slice';
+import {setToken} from '../../store/session-slice';
 
 import Form from './Form';
 import Modal from '../modal';

@@ -4,7 +4,6 @@ import { RootState } from './store';
 
 interface Session {
     token?: string;
-    error?: string;
 }
 
 
@@ -23,12 +22,10 @@ const getToken = () => {
 
 const initialState: Session = {
     token: undefined,
-    error: undefined,
 };
 
 const preloadedState: DeepPartial<Session> = {
     token: getToken(),
-    error: undefined,
 };
 
 
@@ -38,25 +35,16 @@ const slice = createSlice({
     reducers: {
         setToken: (state, {payload}: PayloadAction<string>) => {
             state.token = payload;
-            state.error = undefined;
 
             // FIXME: side effects should be in a middleware
             storeToken(payload);
-        },
-        setError: (state, {payload}: PayloadAction<string>) => {
-            state.token = undefined;
-            state.error = payload;
-
-            // FIXME: side effects should be in a middleware
-            removeToken();
         }
     }
 });
 
 
 export const selectToken = (state: RootState) => state.session.token;
-export const selectError = (state: RootState) => state.session.error;
 
-export const { setToken, setError } = slice.actions;
+export const {setToken} = slice.actions;
 export const sessionReducer = slice.reducer;
 export const sessionPreloadedState = preloadedState;

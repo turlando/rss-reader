@@ -1,0 +1,36 @@
+.Reader {
+    display: grid;
+
+    width: 100vw;
+    height: 100vh;
+
+    z-index: 1;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    grid-template-areas:
+        "subscriptions-browser feed-browser"
+        "subscriptions-browser item-viewer";
+
+    grid-template-columns: 22.5rem 1fr;
+    grid-template-rows: 1fr 1fr;
+
+    gap: var(--grid-gap);
+}
+
+.Reader__SubscriptionsBrowser {
+    grid-area: subscriptions-browser;
+    overflow-y: auto;
+}
+
+.Reader__FeedBrowser {
+    grid-area: feed-browser;
+    overflow-y: auto;
+}
+
+.Reader__ItemViewer {
+    grid-area: item-viewer;
+    overflow-y: auto;
+}

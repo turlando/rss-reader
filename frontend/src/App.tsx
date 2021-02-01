@@ -5,6 +5,7 @@ import {useSelector} from 'react-redux';
 import {selectToken} from './store/session-slice';
 
 import Login from './components/login';
+import Reader from './components/reader';
 
 
 function App() {
@@ -17,7 +18,7 @@ function App() {
             </Route>
 
             <Route path="/" exact>
-                { !isLogged ? <Redirect to="/login" /> : <p>logged</p> }
+                { !isLogged ? <Redirect to="/login" /> : <Reader/> }
             </Route>
         </BrowserRouter>
     );
