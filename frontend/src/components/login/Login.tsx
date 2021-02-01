@@ -1,8 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
 import {ResultType, login} from '../../api';
-import {setToken, selectError, setError} from '../../store/session-slice';
+import {setToken } from '../../store/session-slice';
 
 import Form from './Form';
 import Modal from '../modal';
@@ -12,12 +12,12 @@ import './Login.css';
 
 const Login = () => {
     const dispatch = useDispatch();
-    const error = useSelector(selectError);
+    const [error, setError] = useState("");
 
     const handleLogin = (username: string, password: string) => {
         login(username, password).then(session => {
             if (session.result === ResultType.Failure)
-                dispatch(setError("Login unsuccessful"))
+                setError("Login unsuccessful")
             else
                 dispatch(setToken(session.data.token))
         })
@@ -28,11 +28,10 @@ const Login = () => {
             <div className="Login">
                 <Form handleLogin={handleLogin}/>
 
-                {
-                    error !== undefined &&
-                    <div className="Login__error">
-                        {error}
-                    </div>
+                { error !== "" &&
+                  <div className="Login__error">
+                      {error}
+                  </div>
                 }
             </div>
         </Modal>
