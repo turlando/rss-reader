@@ -16,7 +16,7 @@ const Login = () => {
 
     const handleLogin = (username: string, password: string) => {
         login(username, password).then(session => {
-            if (session.result == ResultType.Failure)
+            if (session.result === ResultType.Failure)
                 dispatch(setError("Login unsuccessful"))
             else
                 dispatch(setToken(session.data.token))
@@ -29,7 +29,7 @@ const Login = () => {
                 <Form handleLogin={handleLogin}/>
 
                 {
-                    error != undefined &&
+                    error !== undefined &&
                     <div className="Login__error">
                         {error}
                     </div>

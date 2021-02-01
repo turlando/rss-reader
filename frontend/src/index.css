@@ -9,4 +9,6 @@ body {
     height: 100vh;
 
     background: var(--background-color);
+
+    z-index: 0;
 }

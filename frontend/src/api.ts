@@ -68,7 +68,7 @@ const HTTP_CODE_TO_ERROR_TYPE: Record<number, ErrorType> = {
 
 
 async function parseResponse<T>(response: AxiosResponse<T>): Promise<Result<T>> {
-    if (response.status != 200)
+    if (response.status !== 200)
         return Failure(HTTP_CODE_TO_ERROR_TYPE[response.status]);
     return Success<T>(response.data);
 }
@@ -106,6 +106,6 @@ interface Session {
 
 
 export const login = (username: string, password: string) => {
-    return axios.post<Session>('/session', {username, password})
+    return axios.post<Session>(SESSION_PATH, {username, password})
         .then(parseResponse);
 };
