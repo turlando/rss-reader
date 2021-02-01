@@ -15,20 +15,15 @@ interface Props {
 const Modal: React.FC<Props> = ({
     children,
     blur    = false,
-    onClick = (evt: OnClickEvent) => null
+    onClick = (evt: OnClickEvent) => {}
 }) => {
-
-    const handleClick = (evt: OnClickEvent) => {
-        evt.stopPropagation();
-        onClick(evt);
-    };
 
     return (
         <div
             className={classnames("Modal__container", {
                 "Modal__container--blur": blur
             })}
-            onClick={handleClick}
+            onClick={onClick}
         >
             {children}
         </div>

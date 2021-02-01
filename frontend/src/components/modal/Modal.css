@@ -17,5 +17,5 @@
 
 
 .Modal__container--blur{
-    backdrop-filter: blur(3px);
+    backdrop-filter: blur(1px);
 }

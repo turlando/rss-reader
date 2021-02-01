@@ -1,10 +1,13 @@
 import {Action, ThunkAction, configureStore} from '@reduxjs/toolkit';
+
 import {sessionReducer, sessionPreloadedState} from './session-slice';
+import {readerReducer} from './reader-slice';
 
 
 export const store = configureStore({
     reducer: {
         session: sessionReducer,
+        reader: readerReducer,
     },
 
     preloadedState: {
