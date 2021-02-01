@@ -1,0 +1,20 @@
+.Modal__container {
+    display: grid;
+
+    width: 100vw;
+    height: 100vh;
+
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    justify-content: center;
+    align-content: center;
+
+    z-index: 2;
+}
+
+
+.Modal__container--blur{
+    backdrop-filter: blur(3px);
+}

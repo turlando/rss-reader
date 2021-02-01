@@ -1,0 +1,40 @@
+.Login {
+    width: 35vh;
+    padding: 1.5rem;
+    background: white;
+}
+
+
+.Login__form__element {
+    width: 100%;
+    height: 2.5rem;
+
+    margin-bottom: 1vh;
+    border: none;
+
+    background: lightgrey;
+}
+
+
+.Login__form__element:focus {
+    outline: darkslategray solid 2px;
+}
+
+.Login__form__input {
+    padding: 1rem;
+}
+
+.Login__form__input::placeholder {
+    color: darkslategray;
+}
+
+.Login__form__button {
+    color: darkslategray;
+}
+
+.Login__error {
+    width: 100%;
+    padding: 0.5rem;
+    background: firebrick;
+    color: lightgrey;
+}
