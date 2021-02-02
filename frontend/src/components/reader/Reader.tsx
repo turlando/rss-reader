@@ -9,6 +9,7 @@ import SubscriptionsBrowser from '../subscriptions-browser';
 import FeedBrowser from '../feed-browser';
 import FeedItemViewer from '../feed-item-viewer';
 import {AddFolderForm} from '../subscriptions-editor';
+import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
 
 import './Reader.css';
 
@@ -50,7 +51,15 @@ const Reader: React.FC = () => {
                   <p>Edit</p>
                 }
                 { mode === Mode.Delete &&
-                  <p>Delete</p>
+                  <Dialog>
+                      <DialogText>
+                          <p>Are you really sure to remove this?</p>
+                      </DialogText>
+                      <DialogButtons>
+                          <DialogButton text="Remove" primary />
+                          <DialogButton text="Cancel" />
+                      </DialogButtons>
+                  </Dialog>
                 }
               </Modal>
             }
