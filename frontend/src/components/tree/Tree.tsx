@@ -1,6 +1,9 @@
 import React from 'react';
 
-import {SubscriptionTree, SubscriptionTreeNode, SubscriptionTreeNodeType} from '../../api';
+import {
+    SubscriptionTree, SubscriptionTreeNode, SubscriptionTreeNodeType,
+    treeNodeKey
+} from '../../api';
 
 import FolderNode from './FolderNode';
 import FeedNode from './FeedNode';
@@ -14,11 +17,6 @@ interface Props {
     tree: SubscriptionTree;
     selectedNode?: string;
     onClick?: (evt: OnClickEvent, node: SubscriptionTreeNode) => void;
-}
-
-
-export const nodeId = (node: SubscriptionTreeNode): string => {
-    return `${node.type}-${node.id}`;
 }
 
 
@@ -47,9 +45,9 @@ const nodeMaker = (
     ) {
         return (
             <FolderNode
-                key={nodeId(node)}
+                key={treeNodeKey(node)}
                 folder={node}
-                selected={selectedNode === nodeId(node)}
+                selected={selectedNode === treeNodeKey(node)}
                 onClick={evt => onClick(evt, node)}
             />
         );
@@ -61,9 +59,9 @@ const nodeMaker = (
     ) {
         return (
             <FolderNode
-                key={nodeId(node)}
+                key={treeNodeKey(node)}
                 folder={node}
-                selected={selectedNode === nodeId(node)}
+                selected={selectedNode === treeNodeKey(node)}
                 onClick={evt => onClick(evt, node)}
             >
                 {node.children.map(child => fn(child))}
@@ -74,9 +72,9 @@ const nodeMaker = (
     if (node.type === SubscriptionTreeNodeType.Feed)
         return (
             <FeedNode
-                key={nodeId(node)}
+                key={treeNodeKey(node)}
                 feed={node}
-                selected={selectedNode === nodeId(node)}
+                selected={selectedNode === treeNodeKey(node)}
                 onClick={evt => onClick(evt, node)}
             />
         );

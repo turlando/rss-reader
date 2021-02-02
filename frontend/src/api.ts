@@ -8,6 +8,7 @@ import {store} from './store/store';
 const BACKEND_URL = 'http://localhost:8000';
 const SESSION_PATH = "session";
 const SUBSCRIPTIONS_PATH = "subscriptions";
+const FOLDER_PATH = "folder";
 
 
 /* Result types ***************************************************************/
@@ -107,6 +108,11 @@ export type SubscriptionTreeNode   = SubscriptionTreeFolder | SubscriptionTreeFe
 export type SubscriptionTree       = SubscriptionTreeNode[]
 
 
+export const treeNodeKey = (node: SubscriptionTreeNode): string => {
+    return `${node.type}-${node.id}`;
+}
+
+
 /* API helpers ***************************************************************/
 
 const HTTP_CODE_TO_ERROR_TYPE: Record<number, ErrorType> = {
@@ -157,5 +163,12 @@ export const login = (username: string, password: string) => {
 
 export const getSubscriptions = () => {
     return axios.get<SubscriptionTree>(SUBSCRIPTIONS_PATH)
-        .then(parseResponse)
+        .then(parseResponse);
+}
+
+
+export const addFolder = (name: string, parent: number | undefined) => {
+    // TODO: clean this mess
+    return axios.post(FOLDER_PATH, {name, parent: parent === undefined ? null : parent})
+        .then(parseResponse);
 }

@@ -5,6 +5,7 @@ import {Mode, selectMode, setMode} from '../../store/reader-slice';
 
 import Modal from '../modal';
 import SubscriptionsBrowser from '../subscriptions-browser';
+import {AddFolderForm} from '../subscriptions-editor';
 
 import './Reader.css';
 
@@ -34,7 +35,7 @@ const Reader: React.FC = () => {
                   blur={true}
               >
                 { mode === Mode.AddFolder &&
-                  <p>Add folder</p>
+                  <AddFolderForm/>
                 }
                 { mode === Mode.AddFeed &&
                   <p>Add folder</p>
