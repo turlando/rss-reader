@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useState} from 'react';
 
-import { Folder } from '../../api';
+import {Folder} from '../../api';
 
 
 type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
@@ -16,7 +16,13 @@ const FolderNode: React.FC<Props> = ({
     folder,
     onClick = (evt: OnClickEvent) => null
 }) => {
+    const [open, setOpen] = useState(true);
     const {id, name} = folder;
+
+    const toggleOpen = (evt: OnClickEvent) => {
+        evt.stopPropagation();
+        setOpen(!open);
+    }
 
     return (
         <div className="Tree__Folder">
@@ -24,10 +30,16 @@ const FolderNode: React.FC<Props> = ({
                 className="Tree__item"
                 onClick={onClick}
             >
+                <span
+                    className="Tree__item__caret"
+                    onClick={toggleOpen}
+                >
+                    {open ? "-" : "+"}
+                </span>
                 <span className="Tree__item__name">{name}</span>
             </div>
 
-          { children &&
+          { children && open &&
             <div className="Tree__Folder__children">
                 {children}
             </div>

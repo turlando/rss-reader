@@ -18,8 +18,11 @@ const FeedNode: React.FC<Props> = ({
     const {title} = feed;
 
     return (
-        <div className="Tree__Feed Tree_item">
-          <span className="Tree__item__name">{title}</span>
+        <div
+            className="Tree__Feed Tree_item"
+            onClick={onClick}
+        >
+            <span className="Tree__item__name">{title}</span>
         </div>
     );
 };
