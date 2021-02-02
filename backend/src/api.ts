@@ -299,13 +299,14 @@ export async function addFeed(
     connection: Connection,
     userId: number,
     url: string,
+    title?: string,
     folderId?: number
 ) {
     const rss = new RssParser()
     const feed = await rss.parseURL(url)
 
     return db.addFeed(connection, userId, url,
-                      feed.title || "",
+                      title || feed.title || "",
                       feed.link || "",
                       feed.description || "",
                       folderId)
@@ -348,9 +349,10 @@ export async function updateFeed(
     connection: Connection,
     id: number,
     userId: number,
+    title: string,
     folderId?: number
 ): Promise<Result<Feed>> {
-    return db.updateFeed(connection, id, userId, folderId)
+    return db.updateFeed(connection, id, userId, title, folderId)
         .then(res => res.rowCount == 0
             ? Failure(ErrorType.NotFound)
             : Success(feedRowToFeed(res.rows[0])))

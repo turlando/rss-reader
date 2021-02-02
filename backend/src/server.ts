@@ -173,19 +173,20 @@ function makeFeedRouter(connection: Connection): Router {
     return Router()
         .post('/',
               requireSession(connection),
-              requireParams("url", "folder"),
+              requireParams("url", "title", "folder"),
               (req, res, next) => {
-                  const { url, folder } = req.body
-                  return addFeed(connection, req.user.id, url, folder)
+                  const { url, title, folder } = req.body
+                  return addFeed(connection, req.user.id, url, title, folder)
                       .then(feed => makeResponse(res, feed))
               })
 
         .put('/:id(\\d+)',
              requireSession(connection),
-             requireParams("folder"),
+             requireParams("title", "folder"),
              (req, res, next) => {
                  const id = Number(req.params.id)
-                 return updateFeed(connection, id, req.user.id, req.body.folder)
+                 return updateFeed(connection, id, req.user.id,
+                                   req.body.title, req.body.folder)
                      .then(feed => makeResponse(res, feed))
              })
 

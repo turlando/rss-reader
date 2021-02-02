@@ -258,6 +258,7 @@ Create a new feed. Authentication through session token is required.
 
 * **Parameters**:
   * `url`: string
+  * `title`: string or null
   * `folder`: number or null
 
 * **Success response**:
@@ -305,6 +306,7 @@ Update an existing feed. Authentication through session token is required.
   * `id`: number
 
 * **Parameters**:
+  * `title`: string
   * `parent`: number or null
 
 * **Success response**:

@@ -295,16 +295,18 @@ export function updateFeed(
     connection: Connection,
     id: number,
     userId: number,
+    title: string,
     folderId?: number
 ): Promise<QueryResult<FeedRow>> {
     return query<FeedRow>(
         connection,
         q("   UPDATE feeds",
-          "      SET folder_id = $3",
+          "      SET title = $3",
+          "        , folder_id = $4",
           "    WHERE id = $1 ",
           "      AND user_id = $2",
           "RETURNING *"),
-        [id, userId, folderId])
+        [id, userId, title, folderId])
 }
 
 
