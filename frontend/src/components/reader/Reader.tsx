@@ -2,6 +2,7 @@ import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
 import {Mode, selectMode, setMode} from '../../store/reader-slice';
+import { fetchSubscriptions } from '../../store/subscriptions-slice';
 
 import Modal from '../modal';
 import SubscriptionsBrowser from '../subscriptions-browser';
@@ -37,7 +38,10 @@ const Reader: React.FC = () => {
                   blur={true}
               >
                 { mode === Mode.AddFolder &&
-                  <AddFolderForm/>
+                  <AddFolderForm onDone={() => {
+                      dispatch(fetchSubscriptions());
+                      dispatch(setMode(Mode.Normal));
+                    }}/>
                 }
                 { mode === Mode.AddFeed &&
                   <p>Add folder</p>

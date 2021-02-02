@@ -25,7 +25,12 @@ const Modal: React.FC<Props> = ({
             })}
             onClick={onClick}
         >
-            {children}
+            <div
+                className="Modal__content"
+                onClick={e => e.stopPropagation()}
+            >
+                {children}
+            </div>
         </div>
     )
 };

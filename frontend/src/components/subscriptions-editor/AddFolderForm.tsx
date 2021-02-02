@@ -1,27 +1,32 @@
 import React, {useState} from 'react';
-import { useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 
 import {treeNodeKey, addFolder} from '../../api';
-import {selectSubscriptions, fetchSubscriptions} from '../../store/subscriptions-slice';
+import {selectSubscriptions} from '../../store/subscriptions-slice';
 
 import Tree from '../tree';
 
 
 /* Form ***********************************************************************/
 
-const Form: React.FC = () => {
-    const dispatch = useDispatch();
+interface Props {
+    onDone?: () => void;
+}
+
+const Form: React.FC<Props> = ({
+    onDone = () => null
+}) => {
     const [name, setName] = useState("");
     const [parent, setParent] = useState<number | undefined>(undefined);
     const [selectedNode, setSelectedNode] = useState<string | undefined>(undefined);
     const subscriptions = useSelector(selectSubscriptions);
 
-    // FIXME when having onSubmit in form tag the browser reports:
-    // Form submission canceled because the form is not connected
-    // Fixing by moving submit logic in button
-    // Clean this mess
     return (
-        <form >
+        <form onSubmit={evt => {
+            evt.preventDefault();
+            addFolder(name, parent)
+                .then(res => onDone());
+        }}>
             <Input type="text"
                 name="name"
                 placeholder="Name"
@@ -39,12 +44,7 @@ const Form: React.FC = () => {
                 }}
             />
 
-            <SubmitButton onClick={evt => {
-                evt.preventDefault();
-                addFolder(name, parent)
-                    .then(res => dispatch(fetchSubscriptions()));
-            }}
-            />
+            <SubmitButton/>
         </form>
     );
 }
@@ -83,16 +83,11 @@ const Input: React.FC<InputProps> = ({
 
 /* SubmitButton ***************************************************************/
 
-interface SubmitButtonProps {
-    onClick: (e: any) => void
-}
-
-const SubmitButton: React.FC<SubmitButtonProps> = ({onClick}) =>
+const SubmitButton: React.FC = () =>
     <input
         className="Login__form__element Login__form__button"
         type="submit"
         name="Log in"
-onClick={onClick}
     />;
 
 
