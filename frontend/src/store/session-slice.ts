@@ -43,9 +43,9 @@ const slice = createSlice({
 });
 
 
+export const sessionReducer = slice.reducer;
+export const sessionPreloadedState = preloadedState;
+
 export const selectToken = (state: RootState) => state.session.token;
 
 export const {setToken} = slice.actions;
-
-export const sessionReducer = slice.reducer;
-export const sessionPreloadedState = preloadedState;

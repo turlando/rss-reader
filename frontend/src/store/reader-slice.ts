@@ -32,6 +32,6 @@ const slice = createSlice({
 });
 
 
-export const selectMode = (state: RootState) => state.reader.mode;
-export const {setMode} = slice.actions;
 export const readerReducer = slice.reducer;
+export const {setMode} = slice.actions;
+export const selectMode = (state: RootState) => state.reader.mode;
