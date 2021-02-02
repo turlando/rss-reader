@@ -3,6 +3,7 @@ import {Action, ThunkAction, configureStore} from '@reduxjs/toolkit';
 import {sessionReducer, sessionPreloadedState} from './session-slice';
 import {readerReducer} from './reader-slice';
 import {subscriptionsReducer} from './subscriptions-slice';
+import {feedReducer} from './feed-slice';
 
 
 export const store = configureStore({
@@ -10,6 +11,7 @@ export const store = configureStore({
         session: sessionReducer,
         reader: readerReducer,
         subscriptions: subscriptionsReducer,
+        feed: feedReducer,
     },
 
     preloadedState: {

@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { SubscriptionTreeNode, treeNodeKey } from '../../api';
+import { SubscriptionTreeNode, treeNodeKey, SubscriptionTreeNodeType } from '../../api';
 import {fetchSubscriptions, selectSubscriptions} from '../../store/subscriptions-slice';
 
 import Toolbar from '../toolbar';
 import Tree from '../tree';
 
 import './SubscriptionsBrowser.css';
+import { fetchFeed } from '../../store/feed-slice';
 
 
 const SubscriptionsBrowser: React.FC = () => {
@@ -25,7 +26,11 @@ const SubscriptionsBrowser: React.FC = () => {
             <Tree
                 tree={subscriptions}
                 selectedNode={selectedNode}
-                onClick={(e, f) => {setSelectedNode(treeNodeKey(f))}}
+                onClick={(e, f) => {
+                    setSelectedNode(treeNodeKey(f))
+                    if (f.type === SubscriptionTreeNodeType.Feed)
+                        dispatch(fetchFeed(f))
+                }}
             />
             </div>
             <div className="SubscriptionsBrowser__Toolbar">
