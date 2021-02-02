@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
 
-import {treeNodeKey, addFolder} from '../../api';
+import { treeNodeKey, addFolder, SubscriptionTreeNode} from '../../api';
 import {selectSubscriptions} from '../../store/subscriptions-slice';
 
 import {Form, FormInput, FormSubmit} from '../form';
@@ -19,7 +19,7 @@ const AddFolderForm: React.FC<Props> = ({
 }) => {
     const [name, setName] = useState("");
     const [parent, setParent] = useState<number | undefined>(undefined);
-    const [selectedNode, setSelectedNode] = useState<string | undefined>(undefined);
+    const [selectedNode, setSelectedNode] = useState<SubscriptionTreeNode| undefined>(undefined);
     const subscriptions = useSelector(selectSubscriptions);
 
     return (
@@ -37,7 +37,7 @@ const AddFolderForm: React.FC<Props> = ({
                 selectedNode={selectedNode}
                 onClick={(e, f) => {
                     e.stopPropagation();
-                    setSelectedNode(treeNodeKey(f));
+                    setSelectedNode(f);
                     setParent(f.id);
                 }}
             />

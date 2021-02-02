@@ -1,17 +1,19 @@
 import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {ResultType, SubscriptionTree, getSubscriptions} from '../api';
+import {SubscriptionTreeNode, ResultType, SubscriptionTree, getSubscriptions} from '../api';
 
 
 interface Subscriptions {
     loading: boolean;
     subscriptions: SubscriptionTree;
+    selectedNode?: SubscriptionTreeNode;
 }
 
 
 const initialState: Subscriptions = {
     loading: true,
     subscriptions: [],
+    selectedNode: undefined,
 };
 
 
@@ -24,6 +26,9 @@ const slice = createSlice({
         },
         setSubscriptions: (state, {payload}: PayloadAction<SubscriptionTree>) => {
             state.subscriptions = payload;
+        },
+        setSelectedNode: (state, {payload}: PayloadAction<SubscriptionTreeNode>) => {
+            state.selectedNode = payload;
         },
     }
 });
@@ -48,5 +53,6 @@ export const subscriptionsReducer = slice.reducer;
 
 export const selectLoading = (state: RootState) => state.subscriptions.loading;
 export const selectSubscriptions = (state: RootState) => state.subscriptions.subscriptions;
+export const selectSelectedNode = (state: RootState) => state.subscriptions.selectedNode;
 
-export const {setLoading, setSubscriptions} = slice.actions;
+export const {setLoading, setSubscriptions, setSelectedNode} = slice.actions;

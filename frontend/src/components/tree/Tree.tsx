@@ -15,14 +15,14 @@ type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 interface Props {
     tree: SubscriptionTree;
-    selectedNode?: string;
+    selectedNode?: SubscriptionTreeNode;
     onClick?: (evt: OnClickEvent, node: SubscriptionTreeNode) => void;
 }
 
 
 const Tree: React.FC<Props> = ({
     tree,
-    selectedNode,
+    selectedNode = undefined,
     onClick = (evt: OnClickEvent, node: SubscriptionTreeNode) => null,
 }) => {
     const makeNode = nodeMaker(onClick, selectedNode);
@@ -37,7 +37,7 @@ const Tree: React.FC<Props> = ({
 
 const nodeMaker = (
     onClick: (evt: OnClickEvent, node: SubscriptionTreeNode) => void,
-    selectedNode?: string
+    selectedNode?: SubscriptionTreeNode
 ) => function fn(node: SubscriptionTreeNode) {
     if (
         node.type === SubscriptionTreeNodeType.Folder
@@ -47,7 +47,7 @@ const nodeMaker = (
             <FolderNode
                 key={treeNodeKey(node)}
                 folder={node}
-                selected={selectedNode === treeNodeKey(node)}
+                selected={selectedNode?.type === node.type && selectedNode?.id === node.id}
                 onClick={evt => onClick(evt, node)}
             />
         );
@@ -61,7 +61,7 @@ const nodeMaker = (
             <FolderNode
                 key={treeNodeKey(node)}
                 folder={node}
-                selected={selectedNode === treeNodeKey(node)}
+                selected={selectedNode?.type === node.type && selectedNode?.id === node.id}
                 onClick={evt => onClick(evt, node)}
             >
                 {node.children.map(child => fn(child))}
@@ -74,7 +74,7 @@ const nodeMaker = (
             <FeedNode
                 key={treeNodeKey(node)}
                 feed={node}
-                selected={selectedNode === treeNodeKey(node)}
+                selected={selectedNode?.type === node.type && selectedNode?.id === node.id}
                 onClick={evt => onClick(evt, node)}
             />
         );

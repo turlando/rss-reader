@@ -1,15 +1,16 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
+import { removeFolder, SubscriptionTreeNodeType, removeFeed} from '../../api';
 import {Mode, selectMode, setMode} from '../../store/reader-slice';
-import { fetchSubscriptions } from '../../store/subscriptions-slice';
+import {fetchSubscriptions, selectSelectedNode} from '../../store/subscriptions-slice';
 
 import Modal from '../modal';
+import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
 import SubscriptionsBrowser from '../subscriptions-browser';
 import FeedBrowser from '../feed-browser';
 import FeedItemViewer from '../feed-item-viewer';
 import {AddFolderForm} from '../subscriptions-editor';
-import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
 
 import './Reader.css';
 
@@ -17,6 +18,7 @@ import './Reader.css';
 const Reader: React.FC = () => {
     const dispatch = useDispatch();
     const mode = useSelector(selectMode);
+    const selectedNode = useSelector(selectSelectedNode);
 
     return (
         <div className="Reader">
@@ -56,7 +58,23 @@ const Reader: React.FC = () => {
                           <p>Are you really sure to remove this?</p>
                       </DialogText>
                       <DialogButtons>
-                          <DialogButton text="Remove" primary />
+                          <DialogButton
+                              text="Remove"
+                              onClick={e => {
+                                  if (selectedNode?.type === SubscriptionTreeNodeType.Folder)
+                                      return removeFolder(selectedNode.id)
+                                          .then(() => {
+                                              dispatch(fetchSubscriptions())
+                                              dispatch(setMode(Mode.Normal))
+                                          })
+                                  if (selectedNode?.type === SubscriptionTreeNodeType.Feed)
+                                      return removeFeed(selectedNode.id)
+                                          .then(() => {
+                                              dispatch(fetchSubscriptions())
+                                              dispatch(setMode(Mode.Normal))
+                                          })
+                              }}
+                              primary />
                           <DialogButton text="Cancel" />
                       </DialogButtons>
                   </Dialog>

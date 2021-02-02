@@ -174,7 +174,19 @@ export const addFolder = (name: string, parent: number | undefined) => {
 }
 
 
-export const getFeedItems = (feedID: number) => {
-    return axios.get(`/feed/${feedID}/items`)
+export const removeFolder = (folderId: number) => {
+    return axios.delete(`${FOLDER_PATH}/${folderId}`)
+        .then(parseResponse);
+}
+
+
+export const getFeedItems = (feedId: number) => {
+    return axios.get(`/feed/${feedId}/items`)
+        .then(parseResponse);
+}
+
+
+export const removeFeed = (feedId: number) => {
+    return axios.delete(`/feed/${feedId}`)
         .then(parseResponse);
 }
