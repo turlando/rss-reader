@@ -5,7 +5,7 @@
 }
 
 
-.Login__form__element {
+.Login__Form__element {
     width: 100%;
     height: 2.5rem;
 
@@ -16,19 +16,19 @@
 }
 
 
-.Login__form__element:focus {
+.Login__Form__element:focus {
     outline: darkslategray solid 2px;
 }
 
-.Login__form__input {
+.Login__Form__input {
     padding: 1rem;
 }
 
-.Login__form__input::placeholder {
+.Login__Form__input::placeholder {
     color: darkslategray;
 }
 
-.Login__form__button {
+.Login__Form__button {
     color: darkslategray;
 }
 

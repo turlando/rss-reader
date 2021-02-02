@@ -4,7 +4,7 @@ import {useDispatch} from 'react-redux';
 import {ResultType, login} from '../../api';
 import {setToken} from '../../store/session-slice';
 
-import Form from './Form';
+import LoginForm from './LoginForm';
 import Modal from '../modal';
 
 import './Login.css';
@@ -26,7 +26,7 @@ const Login = () => {
     return (
         <Modal>
             <div className="Login">
-                <Form handleLogin={handleLogin}/>
+                <LoginForm handleLogin={handleLogin} />
 
                 { error !== "" &&
                   <div className="Login__error">
