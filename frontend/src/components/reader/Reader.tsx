@@ -52,22 +52,29 @@ const Reader: React.FC = () => {
                 { mode === Mode.Edit &&
                   <p>Edit</p>
                 }
-                { mode === Mode.Delete &&
+                { mode === Mode.Delete
+               && selectedNode !== undefined &&
                   <Dialog>
                       <DialogText>
-                          <p>Are you really sure to remove this?</p>
+                          { selectedNode.type === SubscriptionTreeNodeType.Folder &&
+                            <p>Are you really sure to remove "{selectedNode.name}" and
+                               all its children?</p>
+                          }
+                          { selectedNode.type === SubscriptionTreeNodeType.Feed &&
+                            <p>Are you really sure to remove "{selectedNode.title}"</p>
+                          }
                       </DialogText>
                       <DialogButtons>
                           <DialogButton
                               text="Remove"
                               onClick={e => {
-                                  if (selectedNode?.type === SubscriptionTreeNodeType.Folder)
+                                  if (selectedNode.type === SubscriptionTreeNodeType.Folder)
                                       return removeFolder(selectedNode.id)
                                           .then(() => {
                                               dispatch(fetchSubscriptions())
                                               dispatch(setMode(Mode.Normal))
                                           })
-                                  if (selectedNode?.type === SubscriptionTreeNodeType.Feed)
+                                  if (selectedNode.type === SubscriptionTreeNodeType.Feed)
                                       return removeFeed(selectedNode.id)
                                           .then(() => {
                                               dispatch(fetchSubscriptions())
