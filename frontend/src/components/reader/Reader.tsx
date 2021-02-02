@@ -10,7 +10,7 @@ import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
 import SubscriptionsBrowser from '../subscriptions-browser';
 import FeedBrowser from '../feed-browser';
 import FeedItemViewer from '../feed-item-viewer';
-import {AddFolderForm} from '../subscriptions-editor';
+import {AddFolderForm, AddFeedForm} from '../subscriptions-editor';
 
 import './Reader.css';
 
@@ -47,7 +47,10 @@ const Reader: React.FC = () => {
                     }}/>
                 }
                 { mode === Mode.AddFeed &&
-                  <p>Add folder</p>
+                    <AddFeedForm onDone={() => {
+                        dispatch(fetchSubscriptions());
+                        dispatch(setMode(Mode.Normal));
+                    }}/>
                 }
                 { mode === Mode.Edit &&
                   <p>Edit</p>

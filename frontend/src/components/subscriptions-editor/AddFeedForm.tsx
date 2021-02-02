@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
 
-import {addFolder, SubscriptionTreeNode} from '../../api';
+import { addFolder, SubscriptionTreeNode, addFeed} from '../../api';
 import {selectSubscriptions} from '../../store/subscriptions-slice';
 
 import {Form, FormInput, FormSubmit} from '../form';
@@ -14,22 +14,31 @@ interface Props {
 }
 
 
-const AddFolderForm: React.FC<Props> = ({
+const AddFeedForm: React.FC<Props> = ({
     onDone = () => null
 }) => {
     const [name, setName] = useState("");
+    const [url, setUrl] = useState("");
     const [parent, setParent] = useState<number | undefined>(undefined);
     const [selectedNode, setSelectedNode] = useState<SubscriptionTreeNode| undefined>(undefined);
     const subscriptions = useSelector(selectSubscriptions);
 
     return (
-        <Form onSubmit={() => { addFolder(name, parent).then(res => onDone()) }}>
+        <Form onSubmit={() => { addFeed(url, name, parent).then(res => onDone()) }}>
             <FormInput
                 type="text"
                 name="name"
                 placeholder="Name"
                 value={name}
                 setValue={setName}
+            />
+
+            <FormInput
+                type="text"
+                name="url"
+                placeholder="URL"
+                value={url}
+                setValue={setUrl}
             />
 
             <Tree
@@ -49,4 +58,4 @@ const AddFolderForm: React.FC<Props> = ({
 }
 
 
-export default AddFolderForm;
+export default AddFeedForm;

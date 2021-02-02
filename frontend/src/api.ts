@@ -186,6 +186,17 @@ export const getFeedItems = (feedId: number) => {
 }
 
 
+export const addFeed = (url: string, title?: string, folderId?: number) => {
+    return axios.post(`/feed`, {
+        // TODO: clean this mess
+        url,
+        title: title === undefined ? null : title,
+        folder: folderId === undefined ? null : folderId
+    })
+        .then(parseResponse)
+}
+
+
 export const removeFeed = (feedId: number) => {
     return axios.delete(`/feed/${feedId}`)
         .then(parseResponse);
