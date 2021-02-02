@@ -7,9 +7,10 @@ import {store} from './store/store';
 
 const BACKEND_URL = 'http://localhost:8000';
 const SESSION_PATH = "session";
+const SUBSCRIPTIONS_PATH = "subscriptions";
 
 
-/* API types ******************************************************************/
+/* Result types ***************************************************************/
 
 export enum ResultType {
     Success = "success",
@@ -57,6 +58,55 @@ export function Failure(error: ErrorType): Failure {
 export type Result<T> = Success<T> | Failure
 
 
+/* Model types ****************************************************************/
+
+interface Session {
+    userId: number;
+    token: string;
+}
+
+
+export interface Folder {
+    id: number;
+    name: string;
+    parentFolderId?: number;
+}
+
+
+export interface Feed {
+    id: number,
+    url: string,
+    title: string,
+    link: string,
+    description: string,
+    folderId?: number
+}
+
+
+export interface Item {
+    id: number;
+    feedId: number;
+    guid: string;
+    title: string;
+    description: string;
+    link: string;
+    date: Date;
+}
+
+
+export enum SubscriptionTreeNodeType {
+    Folder = "folder",
+    Feed   = "feed"
+}
+
+
+export type SubscriptionTreeFolder = Folder & { type: SubscriptionTreeNodeType.Folder,
+                                                children: SubscriptionTree }
+export type SubscriptionTreeFeed   = Feed   & { type: SubscriptionTreeNodeType.Feed }
+export type SubscriptionTreeNode   = SubscriptionTreeFolder | SubscriptionTreeFeed
+export type SubscriptionTree       = SubscriptionTreeNode[]
+
+
 /* API helpers ***************************************************************/
 
 const HTTP_CODE_TO_ERROR_TYPE: Record<number, ErrorType> = {
@@ -99,13 +149,13 @@ axios.interceptors.request.use(
 
 /* API requests **************************************************************/
 
-interface Session {
-    userId: number;
-    token: string;
-}
-
-
 export const login = (username: string, password: string) => {
     return axios.post<Session>(SESSION_PATH, {username, password})
         .then(parseResponse);
 };
+
+
+export const getSubscriptions = () => {
+    return axios.get<SubscriptionTree>(SUBSCRIPTIONS_PATH)
+        .then(parseResponse)
+}
