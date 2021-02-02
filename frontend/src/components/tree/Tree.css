@@ -1,3 +1,8 @@
 .Tree__Folder__children {
     margin-left: 1.6rem;
 }
+
+
+.Tree__item--selected {
+    color: red;
+}

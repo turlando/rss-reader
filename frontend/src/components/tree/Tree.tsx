@@ -15,8 +15,23 @@ type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 interface Props {
     tree: SubscriptionTree;
-    selectedNode?: SubscriptionTreeNode;
+    selectedNode?: SelectedNode;
     onClick?: (evt: OnClickEvent, node: SubscriptionTreeNode) => void;
+}
+
+export interface SelectedNode {
+    type: SubscriptionTreeNodeType;
+    id?: number;
+}
+
+
+function isSelected(
+    node: SubscriptionTreeNode,
+    selectedNode?: SelectedNode
+) {
+    if (selectedNode === undefined)
+        return false;
+    return node.type === selectedNode.type && node.id === selectedNode.id;
 }
 
 
@@ -37,7 +52,7 @@ const Tree: React.FC<Props> = ({
 
 const nodeMaker = (
     onClick: (evt: OnClickEvent, node: SubscriptionTreeNode) => void,
-    selectedNode?: SubscriptionTreeNode
+    selectedNode?: SelectedNode
 ) => function fn(node: SubscriptionTreeNode) {
     if (
         node.type === SubscriptionTreeNodeType.Folder
@@ -47,7 +62,7 @@ const nodeMaker = (
             <FolderNode
                 key={treeNodeKey(node)}
                 folder={node}
-                selected={selectedNode?.type === node.type && selectedNode?.id === node.id}
+                selected={isSelected(node, selectedNode)}
                 onClick={evt => onClick(evt, node)}
             />
         );
@@ -61,7 +76,7 @@ const nodeMaker = (
             <FolderNode
                 key={treeNodeKey(node)}
                 folder={node}
-                selected={selectedNode?.type === node.type && selectedNode?.id === node.id}
+                selected={isSelected(node, selectedNode)}
                 onClick={evt => onClick(evt, node)}
             >
                 {node.children.map(child => fn(child))}
@@ -74,7 +89,7 @@ const nodeMaker = (
             <FeedNode
                 key={treeNodeKey(node)}
                 feed={node}
-                selected={selectedNode?.type === node.type && selectedNode?.id === node.id}
+                selected={isSelected(node, selectedNode)}
                 onClick={evt => onClick(evt, node)}
             />
         );

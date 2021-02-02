@@ -169,8 +169,20 @@ export const getSubscriptions = () => {
 
 export const addFolder = (name: string, parent: number | undefined) => {
     // TODO: clean this mess
-    return axios.post(FOLDER_PATH, {name, parent: parent === undefined ? null : parent})
+    return axios.post(FOLDER_PATH, {
+        name,
+        parent: parent === undefined ? null : parent
+    })
         .then(parseResponse);
+}
+
+
+export const updateFolder = (folderId: number, name: string, parent: number | undefined) => {
+    return axios.put(`${FOLDER_PATH}/${folderId}`, {
+        name: name,
+        parent: parent === undefined ? null : parent
+    })
+        .then(parseResponse)
 }
 
 
@@ -194,6 +206,14 @@ export const addFeed = (url: string, title?: string, folderId?: number) => {
         folder: folderId === undefined ? null : folderId
     })
         .then(parseResponse)
+}
+
+
+export const updateFeed = (feedId: number, title: string, folderId?: number) => {
+    return axios.put(`/feed/${feedId}`, {
+        title,
+        folder: folderId === undefined ? null : folderId
+    })
 }
 
 

@@ -1,4 +1,4 @@
-import AddFolderForm from './AddFolderForm';
-import AddFeedForm from './AddFeedForm';
+import FolderForm from './FolderForm';
+import FeedForm from './FeedForm';
 
-export {AddFolderForm, AddFeedForm};
+export {FolderForm, FeedForm};

@@ -1,30 +1,47 @@
 import React, {useState} from 'react';
 import {useSelector} from 'react-redux';
 
-import { addFolder, SubscriptionTreeNode, addFeed} from '../../api';
+import {
+    SubscriptionTreeFeed, SubscriptionTreeNodeType,
+    addFeed, addFolder, updateFeed
+} from '../../api';
 import {selectSubscriptions} from '../../store/subscriptions-slice';
 
 import {Form, FormInput, FormSubmit} from '../form';
-
-import Tree from '../tree';
+import Tree, {SelectedNode} from '../tree';
 
 
 interface Props {
+    feed?: SubscriptionTreeFeed;
     onDone?: () => void;
 }
 
 
-const AddFeedForm: React.FC<Props> = ({
+function selectFolder(node: SubscriptionTreeFeed): SelectedNode {
+    return {
+        type: SubscriptionTreeNodeType.Feed,
+        id: node.folderId,
+    }
+}
+
+
+const FeedForm: React.FC<Props> = ({
+    feed = undefined,
     onDone = () => null
 }) => {
-    const [name, setName] = useState("");
-    const [url, setUrl] = useState("");
-    const [parent, setParent] = useState<number | undefined>(undefined);
-    const [selectedNode, setSelectedNode] = useState<SubscriptionTreeNode| undefined>(undefined);
+    const [name, setName] = useState(feed?.title || "");
+    const [url, setUrl] = useState(feed?.url || "");
+    const [parent, setParent] = useState<number | undefined>(feed?.folderId);
+    const [selectedNode, setSelectedNode] =
+        useState<SelectedNode | undefined>(undefined);
     const subscriptions = useSelector(selectSubscriptions);
 
     return (
-        <Form onSubmit={() => { addFeed(url, name, parent).then(res => onDone()) }}>
+        <Form onSubmit={() => {
+            if (feed === undefined)
+                return addFeed(url, name, parent).then(res => onDone())
+            return updateFeed(feed.id, name, parent).then(res => onDone())
+        }}>
             <FormInput
                 type="text"
                 name="name"
@@ -54,8 +71,7 @@ const AddFeedForm: React.FC<Props> = ({
             <FormSubmit/>
         </Form>
     );
-
 }
 
 
-export default AddFeedForm;
+export default FeedForm;

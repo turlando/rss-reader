@@ -10,7 +10,7 @@ import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
 import SubscriptionsBrowser from '../subscriptions-browser';
 import FeedBrowser from '../feed-browser';
 import FeedItemViewer from '../feed-item-viewer';
-import {AddFolderForm, AddFeedForm} from '../subscriptions-editor';
+import {FolderForm, FeedForm} from '../subscriptions-editor';
 
 import './Reader.css';
 
@@ -35,29 +35,51 @@ const Reader: React.FC = () => {
                 <FeedItemViewer/>
             </div>
 
-            { mode !== Mode.Normal &&
-              <Modal
+            { mode !== Mode.Normal
+           && <Modal
                   onClick={e => dispatch(setMode(Mode.Normal))}
                   blur={true}
               >
-                { mode === Mode.AddFolder &&
-                  <AddFolderForm onDone={() => {
+
+                { mode === Mode.AddFolder
+               && <FolderForm onDone={() => {
                       dispatch(fetchSubscriptions());
                       dispatch(setMode(Mode.Normal));
-                    }}/>
+                  }}/>
                 }
-                { mode === Mode.AddFeed &&
-                    <AddFeedForm onDone={() => {
+
+                { mode === Mode.AddFeed
+               && <FeedForm onDone={() => {
                         dispatch(fetchSubscriptions());
                         dispatch(setMode(Mode.Normal));
                     }}/>
                 }
-                { mode === Mode.Edit &&
-                  <p>Edit</p>
+
+                { mode === Mode.Edit
+              && selectedNode?.type === SubscriptionTreeNodeType.Folder
+              && <FolderForm
+                     folder={selectedNode}
+                     onDone={() => {
+                         dispatch(fetchSubscriptions());
+                         dispatch(setMode(Mode.Normal));
+                     }}
+                 />
                 }
+
+                { mode === Mode.Edit
+               && selectedNode?.type === SubscriptionTreeNodeType.Feed
+               && <FeedForm
+                      feed={selectedNode}
+                      onDone={() => {
+                          dispatch(fetchSubscriptions());
+                          dispatch(setMode(Mode.Normal));
+                      }}
+                  />
+                }
+
                 { mode === Mode.Delete
-               && selectedNode !== undefined &&
-                  <Dialog>
+               && selectedNode !== undefined
+               && <Dialog>
                       <DialogText>
                           { selectedNode.type === SubscriptionTreeNodeType.Folder &&
                             <p>Are you really sure to remove "{selectedNode.name}" and
@@ -84,7 +106,8 @@ const Reader: React.FC = () => {
                                               dispatch(setMode(Mode.Normal))
                                           })
                               }}
-                              primary />
+                              primary
+                          />
                           <DialogButton text="Cancel" />
                       </DialogButtons>
                   </Dialog>
