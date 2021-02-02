@@ -172,3 +172,9 @@ export const addFolder = (name: string, parent: number | undefined) => {
     return axios.post(FOLDER_PATH, {name, parent: parent === undefined ? null : parent})
         .then(parseResponse);
 }
+
+
+export const getFeedItems = (feedID: number) => {
+    return axios.get(`/feed/${feedID}/items`)
+        .then(parseResponse);
+}

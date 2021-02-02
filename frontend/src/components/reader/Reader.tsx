@@ -6,6 +6,7 @@ import {Mode, selectMode, setMode} from '../../store/reader-slice';
 import Modal from '../modal';
 import SubscriptionsBrowser from '../subscriptions-browser';
 import FeedBrowser from '../feed-browser';
+import FeedItemViewer from '../feed-item-viewer';
 import {AddFolderForm} from '../subscriptions-editor';
 
 import './Reader.css';
@@ -27,7 +28,7 @@ const Reader: React.FC = () => {
             </div>
 
             <div className="Reader__ItemViewer">
-                ItemViewer
+                <FeedItemViewer/>
             </div>
 
             { mode !== Mode.Normal &&

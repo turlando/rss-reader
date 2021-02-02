@@ -7,6 +7,7 @@ interface Feed {
     loading: boolean;
     feed?: SubscriptionTreeFeed;
     items: Item[];
+    selectedItem?: Item;
 }
 
 
@@ -14,6 +15,7 @@ const initialState: Feed = {
     loading: true,
     feed: undefined,
     items: [],
+    selectedItem: undefined,
 };
 
 
@@ -29,7 +31,10 @@ const slice = createSlice({
         },
         setItems: (state, {payload}: PayloadAction<Item[]>) => {
             state.items = payload;
-        }
+        },
+        setSelectedItem: (state, {payload}: PayloadAction<Item>) => {
+            state.selectedItem = payload;
+        },
     }
 });
 
@@ -55,5 +60,6 @@ export const feedReducer = slice.reducer;
 export const selectLoading = (state: RootState) => state.feed.loading;
 export const selectFeed = (state: RootState) => state.feed.feed;
 export const selectItems = (state: RootState) => state.feed.items;
+export const selectSelectedItem = (state: RootState) => state.feed.selectedItem;
 
-export const {setLoading, setFeed, setItems} = slice.actions;
+export const {setLoading, setFeed, setItems, setSelectedItem} = slice.actions;
