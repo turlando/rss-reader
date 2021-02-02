@@ -26,13 +26,13 @@ const slice = createSlice({
         setLoading: (state, {payload}: PayloadAction<boolean>) => {
             state.loading = payload;
         },
-        setFeed: (state, {payload}: PayloadAction<SubscriptionTreeFeed>) => {
+        setFeed: (state, {payload}: PayloadAction<SubscriptionTreeFeed | undefined>) => {
             state.feed = payload;
         },
         setItems: (state, {payload}: PayloadAction<Item[]>) => {
             state.items = payload;
         },
-        setSelectedItem: (state, {payload}: PayloadAction<Item>) => {
+        setSelectedItem: (state, {payload}: PayloadAction<Item | undefined>) => {
             state.selectedItem = payload;
         },
     }

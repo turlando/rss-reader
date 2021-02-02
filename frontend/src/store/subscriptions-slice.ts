@@ -27,7 +27,7 @@ const slice = createSlice({
         setSubscriptions: (state, {payload}: PayloadAction<SubscriptionTree>) => {
             state.subscriptions = payload;
         },
-        setSelectedNode: (state, {payload}: PayloadAction<SubscriptionTreeNode>) => {
+        setSelectedNode: (state, {payload}: PayloadAction<SubscriptionTreeNode | undefined>) => {
             state.selectedNode = payload;
         },
     }

@@ -1,9 +1,10 @@
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 
-import { removeFolder, SubscriptionTreeNodeType, removeFeed} from '../../api';
+import {removeFolder, SubscriptionTreeNodeType, removeFeed} from '../../api';
 import {Mode, selectMode, setMode} from '../../store/reader-slice';
-import {fetchSubscriptions, selectSelectedNode} from '../../store/subscriptions-slice';
+import {fetchSubscriptions, selectSelectedNode, setSelectedNode} from '../../store/subscriptions-slice';
+import {setFeed, setItems, setSelectedItem} from '../../store/feed-slice';
 
 import Modal from '../modal';
 import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
@@ -96,14 +97,22 @@ const Reader: React.FC = () => {
                                   if (selectedNode.type === SubscriptionTreeNodeType.Folder)
                                       return removeFolder(selectedNode.id)
                                           .then(() => {
-                                              dispatch(fetchSubscriptions())
-                                              dispatch(setMode(Mode.Normal))
+                                              dispatch(setSelectedNode(undefined));
+                                              dispatch(setFeed(undefined));
+                                              dispatch(setItems([]));
+                                              dispatch(setSelectedItem(undefined));
+                                              dispatch(fetchSubscriptions());
+                                              dispatch(setMode(Mode.Normal));
                                           })
                                   if (selectedNode.type === SubscriptionTreeNodeType.Feed)
                                       return removeFeed(selectedNode.id)
                                           .then(() => {
-                                              dispatch(fetchSubscriptions())
-                                              dispatch(setMode(Mode.Normal))
+                                              dispatch(setSelectedNode(undefined));
+                                              dispatch(setFeed(undefined));
+                                              dispatch(setItems([]));
+                                              dispatch(setSelectedItem(undefined));
+                                              dispatch(fetchSubscriptions());
+                                              dispatch(setMode(Mode.Normal));
                                           })
                               }}
                               primary
