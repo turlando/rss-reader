@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import classnames from 'classnames';
 
 import {Folder} from '../../api';
 
@@ -7,6 +8,7 @@ type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 interface Props {
     folder: Folder;
+    selected?: boolean;
     onClick?: (evt: OnClickEvent) => void;
 }
 
@@ -14,6 +16,7 @@ interface Props {
 const FolderNode: React.FC<Props> = ({
     children,
     folder,
+    selected = false,
     onClick = (evt: OnClickEvent) => null
 }) => {
     const [open, setOpen] = useState(true);
@@ -27,7 +30,9 @@ const FolderNode: React.FC<Props> = ({
     return (
         <div className="Tree__Folder">
             <div
-                className="Tree__item"
+                className={classnames("Tree__item", {
+                    "Tree__item--selected": selected
+                })}
                 onClick={onClick}
             >
                 <span

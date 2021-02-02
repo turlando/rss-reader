@@ -1,9 +1,6 @@
 import React from 'react';
 
-import {
-    SubscriptionTree, SubscriptionTreeNode, SubscriptionTreeNodeType,
-    Folder, Feed
-} from '../../api';
+import {SubscriptionTree, SubscriptionTreeNode, SubscriptionTreeNodeType} from '../../api';
 
 import FolderNode from './FolderNode';
 import FeedNode from './FeedNode';
@@ -15,17 +12,22 @@ type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 interface Props {
     tree: SubscriptionTree;
-    onFolderClick?: (evt: OnClickEvent, folder: Folder) => void;
-    onFeedClick?: (evt: OnClickEvent, feed: Feed) => void;
+    selectedNode?: string;
+    onClick?: (evt: OnClickEvent, node: SubscriptionTreeNode) => void;
+}
+
+
+export const nodeId = (node: SubscriptionTreeNode): string => {
+    return `${node.type}-${node.id}`;
 }
 
 
 const Tree: React.FC<Props> = ({
     tree,
-    onFolderClick = (evt: OnClickEvent, folder: Folder) => null,
-    onFeedClick = (evt: OnClickEvent, feed: Feed) => null
+    selectedNode,
+    onClick = (evt: OnClickEvent, node: SubscriptionTreeNode) => null,
 }) => {
-    const makeNode = nodeMaker(onFolderClick, onFeedClick);
+    const makeNode = nodeMaker(onClick, selectedNode);
 
     return (
         <div className="Tree">
@@ -36,8 +38,8 @@ const Tree: React.FC<Props> = ({
 
 
 const nodeMaker = (
-    onFolderClick: (evt: OnClickEvent, folder: Folder) => void,
-    onFeedClick: (evt: OnClickEvent, feed: Feed) => void
+    onClick: (evt: OnClickEvent, node: SubscriptionTreeNode) => void,
+    selectedNode?: string
 ) => function fn(node: SubscriptionTreeNode) {
     if (
         node.type === SubscriptionTreeNodeType.Folder
@@ -45,9 +47,10 @@ const nodeMaker = (
     ) {
         return (
             <FolderNode
-                key={`folder-${node.id}`}
+                key={nodeId(node)}
                 folder={node}
-                onClick={evt => onFolderClick(evt, node)}
+                selected={selectedNode === nodeId(node)}
+                onClick={evt => onClick(evt, node)}
             />
         );
     }
@@ -58,9 +61,10 @@ const nodeMaker = (
     ) {
         return (
             <FolderNode
-                key={`folder-${node.id}`}
+                key={nodeId(node)}
                 folder={node}
-                onClick={evt => onFolderClick(evt, node)}
+                selected={selectedNode === nodeId(node)}
+                onClick={evt => onClick(evt, node)}
             >
                 {node.children.map(child => fn(child))}
             </FolderNode>
@@ -70,9 +74,10 @@ const nodeMaker = (
     if (node.type === SubscriptionTreeNodeType.Feed)
         return (
             <FeedNode
-                key={`feed-${node.id}`}
+                key={nodeId(node)}
                 feed={node}
-                onClick={evt => onFeedClick(evt, node)}
+                selected={selectedNode === nodeId(node)}
+                onClick={evt => onClick(evt, node)}
             />
         );
 };
