@@ -1,0 +1,12 @@
+.SubscriptionsEditor {
+    width: 300px;
+
+    padding: 1.5rem;
+    background-color: var(--subscriptions-editor-background-color);
+}
+
+
+.SubscriptionsEditor__Form__Tree {
+    margin: 0.5rem 0;
+    overflow-y: auto;
+}

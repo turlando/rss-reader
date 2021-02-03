@@ -16,7 +16,6 @@ const LoginForm: React.FC<Props> = ({
     return (
         <Form onSubmit={ () => handleLogin(username, password) }>
             <FormInput
-                className="Login__element"
                 type="text"
                 name="username"
                 placeholder="Username"
@@ -25,7 +24,6 @@ const LoginForm: React.FC<Props> = ({
             />
 
             <FormInput
-                className="Login__element"
                 type="password"
                 name="password"
                 placeholder="Password"

@@ -1,9 +1,5 @@
 @import './style';
 
-body {
-    font-family: sans-serif;
-}
-
 #root {
     width: 100vw;
     height: 100vh;

@@ -1,21 +1,13 @@
 .Login {
-    width: 35vh;
+    width: 300px;
     padding: 1.5rem;
     background: var(--dialog-background-color);
 }
 
 
-.Login__element {
-    width: 100%;
-    height: 2.5rem;
-
-    margin-bottom: 0.5rem;
-    padding: 0 1rem 0 1rem;
-}
-
-
 .Login__error {
     display: flex;
+    width: 100%;
     align-items: center;
 
     background: firebrick;

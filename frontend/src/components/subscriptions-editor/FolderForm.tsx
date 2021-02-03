@@ -50,6 +50,7 @@ const FolderForm: React.FC<Props> = ({
             />
 
             <Tree
+                className="SubscriptionsEditor__Form__Tree"
                 tree={ subscriptions }
                 selectedNode={ selectedNode }
                 onClick={ (e, f) => {

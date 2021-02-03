@@ -1,6 +1,9 @@
 import React from 'react';
 import classnames from 'classnames';
 
+// @ts-ignore
+import userFriendlyDate from 'user-friendly-date';
+
 import { Item } from '../../api';
 
 
@@ -24,8 +27,12 @@ const FeedItem: React.FC<Props> = ({
             }) }
             onClick={ e => onClick(e, item) }
         >
-            <span className="FeedBrowser__Item__title">{ item.title }</span>
-            <span className="FeedBrowser__Item__date">{ item.date }</span>
+            <span className="FeedBrowser__Item__title">
+                { item.title }
+            </span>
+            <span className="FeedBrowser__Item__date">
+                { userFriendlyDate(new Date(item.date)) }
+            </span>
         </div>
     );
 }

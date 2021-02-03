@@ -7,7 +7,7 @@
     display: grid;
 
     grid-template-areas: "title date";
-    grid-template-columns: 1fr 10rem;
+    grid-template-columns: 1fr 9rem;
 
     padding: 0.15rem 0.5rem 0.15rem 0.5rem;
 

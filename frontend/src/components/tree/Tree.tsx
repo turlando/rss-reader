@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 import {
     SubscriptionTree, SubscriptionTreeNode, SubscriptionTreeNodeType
@@ -13,6 +14,7 @@ import './Tree.css';
 type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
 interface Props {
+    className?: string;
     tree: SubscriptionTree;
     selectedNode?: SelectedNode;
     onClick?: (evt: OnClickEvent, node: SubscriptionTreeNode) => void;
@@ -40,13 +42,16 @@ const treeNodeKey = (node: SubscriptionTreeNode): string =>
 
 const Tree: React.FC<Props> = ({
     tree,
+    className = "",
     selectedNode = undefined,
     onClick = (evt: OnClickEvent, node: SubscriptionTreeNode) => null,
 }) => {
     const makeNode = nodeMaker(onClick, selectedNode);
 
     return (
-        <div className="Tree">
+        <div className={ classnames("Tree", {
+            [className]: className != ""
+        }) }>
             { tree.map(node => makeNode(node)) }
         </div>
     );

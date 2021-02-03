@@ -1,9 +1,52 @@
-.Dialog {}
+.Dialog {
+    width: 500px;
+    padding: 1.5rem;
+    background-color: var(--dialog-background-color);
+}
 
-.Dialog__Text {}
 
-.Dialog__Buttons {}
+.Dialog__Text {
+    margin-bottom: 0.5rem;
+    color: var(--dialog-text-color);
+    font-size: 14pt;
+}
 
-.Dialog__Button {}
 
-.Dialog__Button--primary {}
+.Dialog__Buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+
+.Dialog__Button {
+    margin-left: 1rem;
+    padding: 0.5rem 1rem 0.5rem 1rem;
+    border: none;
+
+    background-color: transparent;
+    color: var(--dialog-button-text-color);
+
+    font-weight: bold;
+}
+
+.Dialog__Button:hover {
+    background-color: var(--dialog-button-hover-background-color);
+}
+
+.Dialog__Button:focus {
+    background-color: var(--dialog-button-focus-background-color);
+}
+
+
+.Dialog__Button--primary {
+    background-color: var(--dialog-button-primary-background-color);
+}
+
+.Dialog__Button--primary:focus {
+    background-color: var(--dialog-button-primary-focus-background-color);
+}
+
+.Dialog__Button--primary:hover{
+    background-color: var(--dialog-button-primary-hover-background-color);
+}

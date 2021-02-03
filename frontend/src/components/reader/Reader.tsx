@@ -11,7 +11,7 @@ import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
 import SubscriptionsBrowser from '../subscriptions-browser';
 import FeedBrowser from '../feed-browser';
 import FeedItemViewer from '../feed-item-viewer';
-import {FolderForm, FeedForm} from '../subscriptions-editor';
+import SubscriptionsEditor, {FolderForm, FeedForm} from '../subscriptions-editor';
 
 import './Reader.css';
 
@@ -43,53 +43,63 @@ const Reader: React.FC = () => {
               >
 
                 { mode === Mode.AddFolder
-               && <FolderForm onDone={() => {
-                      dispatch(fetchSubscriptions());
-                      dispatch(setMode(Mode.Normal));
-                  }}/>
+               && <SubscriptionsEditor>
+                      <FolderForm onDone={ () => {
+                          dispatch(fetchSubscriptions());
+                          dispatch(setMode(Mode.Normal));
+                      } } />
+                  </SubscriptionsEditor>
                 }
 
                 { mode === Mode.AddFeed
-               && <FeedForm onDone={() => {
-                        dispatch(fetchSubscriptions());
-                        dispatch(setMode(Mode.Normal));
-                    }}/>
+               && <SubscriptionsEditor>
+                      <FeedForm onDone={ () => {
+                          dispatch(fetchSubscriptions());
+                          dispatch(setMode(Mode.Normal));
+                      } } />
+                  </SubscriptionsEditor>
                 }
 
                 { mode === Mode.Edit
               && selectedNode?.type === SubscriptionTreeNodeType.Folder
-              && <FolderForm
-                     folder={selectedNode}
-                     onDone={() => {
-                         dispatch(fetchSubscriptions());
-                         dispatch(setMode(Mode.Normal));
-                     }}
-                 />
+              && <SubscriptionsEditor>
+                     <FolderForm
+                         folder={selectedNode}
+                         onDone={ () => {
+                             dispatch(fetchSubscriptions());
+                             dispatch(setMode(Mode.Normal));
+                         } }
+                     />
+                 </SubscriptionsEditor>
                 }
 
                 { mode === Mode.Edit
                && selectedNode?.type === SubscriptionTreeNodeType.Feed
-               && <FeedForm
-                      feed={selectedNode}
-                      onDone={() => {
-                          dispatch(fetchSubscriptions());
-                          dispatch(setMode(Mode.Normal));
-                      }}
-                  />
+               && <SubscriptionsEditor>
+                      <FeedForm
+                          feed={selectedNode}
+                          onDone={ () => {
+                              dispatch(fetchSubscriptions());
+                              dispatch(setMode(Mode.Normal));
+                          } }
+                      />
+                  </SubscriptionsEditor>
                 }
 
                 { mode === Mode.Delete
                && selectedNode !== undefined
                && <Dialog>
+
                       <DialogText>
                           { selectedNode.type === SubscriptionTreeNodeType.Folder &&
-                            <p>Are you really sure to remove "{selectedNode.name}" and
-                               all its children?</p>
+                            <span>Are you really sure to remove "{selectedNode.name}" and
+                            all its children?</span>
                           }
                           { selectedNode.type === SubscriptionTreeNodeType.Feed &&
-                            <p>Are you really sure to remove "{selectedNode.title}"</p>
+                            <span>Are you really sure to remove "{selectedNode.title}"?</span>
                           }
                       </DialogText>
+
                       <DialogButtons>
                           <DialogButton
                               text="Remove"

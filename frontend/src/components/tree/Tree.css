@@ -18,4 +18,5 @@
 .Tree__Node--selected {
     background-color: var(--subscriptions-tree-node-hover-background-color);
     color: var(--subscriptions-tree-node-selected-text-color);
+    font-weight: bold;
 }

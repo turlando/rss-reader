@@ -1,7 +1,6 @@
 :root {
     --background-color: #36393F;
 
-    --dialog-background-color: #2F3136;
 
     --form-input-background-color: #313339;
 
@@ -13,7 +12,8 @@
     --form-input-text-color: #CECFD0;
 
     --form-submit-background-color: #7289DA;
-    --form-submit-focus-background-color: #677BC4;
+    --form-submit-hover-background-color: #677BC4;
+    --form-submit-focus-background-color: #5B6EAE;
     --form-submit-text-color: #F4F5FB;
 
     --subscriptions-tree-background-color: #2F3136;
@@ -29,6 +29,18 @@
     --feedbrowser-item-hover-background-color: #32353B;
     --feedbrowser-item-selected-background-color: #32353B;
     --feedbrowser-item-text-color: #CECFD1;
+
+    --subscriptions-editor-background-color: #313339;
+
+    --dialog-background-color: #2F3136;
+    --dialog-text-color: #CECFD1;
+    --dialog-button-text-color: #CECFD0;
+    --dialog-button-background-color: transparent;
+    --dialog-button-hover-background-color: transparent;
+    --dialog-button-focus-background-color: transparent;
+    --dialog-button-primary-background-color: #7289DA;
+    --dialog-button-primary-hover-background-color: #677BC4;
+    --dialog-button-primary-focus-background-color: #5B6EAE;
 
     --grid-gap: 0;
 }
