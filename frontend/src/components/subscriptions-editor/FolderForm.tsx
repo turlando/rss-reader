@@ -55,7 +55,15 @@ const FolderForm: React.FC<Props> = ({
                 selectedNode={ selectedNode }
                 onClick={ (e, f) => {
                     e.stopPropagation();
-                    setSelectedNode(f);
+
+                    if (f.id === selectedNode?.id) {
+                        setSelectedNode(undefined);
+                        setParent(undefined);
+                    } else {
+                        setSelectedNode(f);
+                        setParent(undefined);
+                    }
+
                     setParent(f.id);
                 } }
             />

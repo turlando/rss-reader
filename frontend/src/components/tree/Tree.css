@@ -6,6 +6,7 @@
 .Tree__Node {
     padding: 0.1rem 0.3rem 0.1rem 0.3rem;
     color: var(--subscriptions-tree-node-text-color);
+    cursor: default;
 }
 
 
@@ -19,4 +20,8 @@
     background-color: var(--subscriptions-tree-node-hover-background-color);
     color: var(--subscriptions-tree-node-selected-text-color);
     font-weight: bold;
+}
+
+.Tree__Node__name {
+    user-select: none;
 }
