@@ -29,7 +29,7 @@ const Login = () => {
                 <LoginForm handleLogin={handleLogin} />
 
                 { error !== "" &&
-                  <div className="Login__error">
+                  <div className="Login__element Login__error">
                       { error }
                   </div>
                 }

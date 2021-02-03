@@ -1,5 +1,37 @@
 .Form {}
 
-.Form__Input {}
 
-.Form__Submit {}
+.Form__Input {
+    border: none;
+
+    background-color: var(--form-input-background-color);
+
+    outline-color: var(--form-input-outline-color);
+    outline-style: solid;
+    outline-width: var(--form-input-outline-size);
+
+    color: var(--form-input-text-color);
+}
+
+
+.Form__Input:focus {
+    outline-color: var(--form-input-outline-focus-color);
+}
+
+
+.Form__Input::placeholder {
+    color: var(--form-input-placeholder-color);
+}
+
+
+.Form__Submit {
+    border: none;
+    background-color: var(--form-submit-background-color);
+    color: var(--form-submit-text-color);
+}
+
+
+.Form__Submit:focus {
+    outline: none;
+    background-color: var(--form-submit-focus-background-color);
+}

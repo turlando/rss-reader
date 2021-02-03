@@ -22,12 +22,12 @@ const FeedNode: React.FC<Props> = ({
 
     return (
         <div
-            className={ classnames("Tree__Feed Tree_item", {
-                "Tree__item--selected": selected,
+            className={ classnames("Tree__Node Tree__Feed", {
+                "Tree__Node--selected": selected,
             }) }
             onClick={ onClick }
         >
-            <span className="Tree__item__name">{ title }</span>
+            <span className="Tree__Node__name">{ title }</span>
         </div>
     );
 };

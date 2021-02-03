@@ -1,5 +1,34 @@
 :root {
-    --background-color: lightslategrey;
+    --background-color: #36393F;
 
-    --grid-gap: 0.5rem;
+    --dialog-background-color: #2F3136;
+
+    --form-input-background-color: #313339;
+
+    --form-input-outline-color: #212327;
+    --form-input-outline-focus-color: #7289DA;
+    --form-input-outline-size: 2px;
+
+    --form-input-placeholder-color: #8E9297;
+    --form-input-text-color: #CECFD0;
+
+    --form-submit-background-color: #7289DA;
+    --form-submit-focus-background-color: #677BC4;
+    --form-submit-text-color: #F4F5FB;
+
+    --subscriptions-tree-background-color: #2F3136;
+    --subscriptions-toolbar-background-color: #292B2F;
+
+    --subscriptions-tree-node-text-color: #7E8186;
+    --subscriptions-tree-node-hover-text-color: #FFFFFF;
+    --subscriptions-tree-node-selected-text-color: #FFFFFF;
+    --subscriptions-tree-node-hover-background-color: #393C42;
+    --subscriptions-tree-node-selected-background-color: #393C42;
+
+    --feedbrowser-background-color: #36393F;
+    --feedbrowser-item-hover-background-color: #32353B;
+    --feedbrowser-item-selected-background-color: #32353B;
+    --feedbrowser-item-text-color: #CECFD1;
+
+    --grid-gap: 0;
 }

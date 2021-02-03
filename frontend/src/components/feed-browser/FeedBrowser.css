@@ -1,7 +1,43 @@
-.FeedBrowser {}
+.FeedBrowser {
+    background-color: var(--feedbrowser-background-color);
+}
 
-.FeedBrowser__Item {}
 
-.FeedBrowser__Item__title {}
+.FeedBrowser__Item {
+    display: grid;
 
-.FeedBrowser__Item__date {}
+    grid-template-areas: "title date";
+    grid-template-columns: 1fr 10rem;
+
+    padding: 0.15rem 0.5rem 0.15rem 0.5rem;
+
+    color: var(--feedbrowser-item-text-color);
+}
+
+
+.FeedBrowser__Item:hover {
+    background-color: var(--feedbrowser-item-hover-background-color);
+}
+
+
+.FeedBrowser__Item--selected {
+    background-color: var(--feedbrowser-item-selected-background-color);
+}
+
+
+.FeedBrowser__Item__title {
+    grid-area: title;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+.FeedBrowser__Item__date {
+    grid-area: date;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

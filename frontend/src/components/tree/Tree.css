@@ -3,6 +3,19 @@
 }
 
 
-.Tree__item--selected {
-    color: red;
+.Tree__Node {
+    padding: 0.1rem 0.3rem 0.1rem 0.3rem;
+    color: var(--subscriptions-tree-node-text-color);
+}
+
+
+.Tree__Node:hover {
+    background-color: var(--subscriptions-tree-node-selected-background-color);
+    color: var(--subscriptions-tree-node-hover-text-color);
+}
+
+
+.Tree__Node--selected {
+    background-color: var(--subscriptions-tree-node-hover-background-color);
+    color: var(--subscriptions-tree-node-selected-text-color);
 }

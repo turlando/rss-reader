@@ -7,16 +7,17 @@
     grid-template-areas:
         "tree"
         "toolbar";
-
-    grid-template-rows: 1fr 2.5rem;
-
+    grid-template-rows: 1fr 3rem;
     gap: var(--grid-gap);
 }
 
 .SubscriptionsBrowser__Tree {
     grid-area: tree;
+    padding: 1rem;
+    background-color: var(--subscriptions-tree-background-color);
 }
 
 .SubscriptionsBrowser__Toolbar {
+    background-color: var(--subscriptions-toolbar-background-color);
     grid-area: toolbar;
 }

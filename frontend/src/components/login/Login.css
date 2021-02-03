@@ -1,40 +1,23 @@
 .Login {
     width: 35vh;
     padding: 1.5rem;
-    background: white;
+    background: var(--dialog-background-color);
 }
 
 
-.Login__Form__element {
+.Login__element {
     width: 100%;
     height: 2.5rem;
 
-    margin-bottom: 1vh;
-    border: none;
-
-    background: lightgrey;
+    margin-bottom: 0.5rem;
+    padding: 0 1rem 0 1rem;
 }
 
-
-.Login__Form__element:focus {
-    outline: darkslategray solid 2px;
-}
-
-.Login__Form__input {
-    padding: 1rem;
-}
-
-.Login__Form__input::placeholder {
-    color: darkslategray;
-}
-
-.Login__Form__button {
-    color: darkslategray;
-}
 
 .Login__error {
-    width: 100%;
-    padding: 0.5rem;
+    display: flex;
+    align-items: center;
+
     background: firebrick;
     color: lightgrey;
 }
