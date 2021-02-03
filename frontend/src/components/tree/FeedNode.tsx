@@ -3,6 +3,8 @@ import classnames from 'classnames';
 
 import { Feed } from '../../api';
 
+import Icon, { IconName } from '../icon';
+
 
 type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
 
@@ -27,6 +29,9 @@ const FeedNode: React.FC<Props> = ({
             }) }
             onClick={ onClick }
         >
+            <span className="Tree__Node__icon">
+                <Icon icon={IconName.Rss} />
+            </span>
             <span className="Tree__Node__name">{ title }</span>
         </div>
     );

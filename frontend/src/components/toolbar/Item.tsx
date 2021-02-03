@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
+type OnClickEvent = React.MouseEvent<HTMLButtonElement, MouseEvent>;
 
 interface Props {
     onClick?: (evt: OnClickEvent) => void;
@@ -13,12 +13,12 @@ const Item: React.FC<Props> = ({
     onClick = (evt: OnClickEvent) => {}
 }) => {
     return (
-        <div
+        <button
             className="Toolbar__Item"
             onClick={ onClick }
         >
             { children }
-        </div>
+        </button>
     );
 }
 

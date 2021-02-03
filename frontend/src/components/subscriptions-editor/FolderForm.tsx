@@ -61,10 +61,8 @@ const FolderForm: React.FC<Props> = ({
                         setParent(undefined);
                     } else {
                         setSelectedNode(f);
-                        setParent(undefined);
+                        setParent(f.id);
                     }
-
-                    setParent(f.id);
                 } }
             />
 

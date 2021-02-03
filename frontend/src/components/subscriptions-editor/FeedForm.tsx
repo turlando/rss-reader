@@ -64,8 +64,14 @@ const FeedForm: React.FC<Props> = ({
                 selectedNode={ selectedNode }
                 onClick={ (e, f) => {
                     e.stopPropagation();
-                    setSelectedNode(f);
-                    setParent(f.id);
+
+                    if (f.id === selectedNode?.id) {
+                        setSelectedNode(undefined);
+                        setParent(undefined);
+                    } else {
+                        setSelectedNode(f);
+                        setParent(f.id);
+                    }
                 } }
             />
 

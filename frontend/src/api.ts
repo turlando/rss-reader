@@ -108,10 +108,6 @@ export type SubscriptionTreeNode   = SubscriptionTreeFolder | SubscriptionTreeFe
 export type SubscriptionTree       = SubscriptionTreeNode[]
 
 
-export const treeNodeKey = (node: SubscriptionTreeNode): string =>
-    `${node.type}-${node.id}`;
-
-
 /* API helpers ***************************************************************/
 
 const HTTP_CODE_TO_ERROR_TYPE: Record<number, ErrorType> = {

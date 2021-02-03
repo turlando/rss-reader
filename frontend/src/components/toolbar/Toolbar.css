@@ -9,4 +9,21 @@
 }
 
 .Toolbar__Item {
+    height: 2rem;
+    width: 2rem;
+
+    padding: 0.3rem;
+    border: 0;
+
+    color: var(--toolbar-item-color);
+    background-color: var(--toolbar-item-background-color);
+}
+
+.Toolbar__Item:hover {
+    background-color: var(--toolbar-item-hover-background-color);
+}
+
+.Toolbar__Item:focus {
+    background-color: var(--toolbar-item-hover-background-color);
+    outline: none;
 }

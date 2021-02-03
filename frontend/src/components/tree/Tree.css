@@ -4,11 +4,16 @@
 
 
 .Tree__Node {
+    display: flex;
+
     padding: 0.1rem 0.3rem 0.1rem 0.3rem;
     color: var(--subscriptions-tree-node-text-color);
+
+    justify-content: flex-start;
+    align-items: center;
+
     cursor: default;
 }
-
 
 .Tree__Node:hover {
     background-color: var(--subscriptions-tree-node-selected-background-color);
@@ -21,6 +26,16 @@
     color: var(--subscriptions-tree-node-selected-text-color);
     font-weight: bold;
 }
+
+.Tree__Node__icon {
+    display: inline-block;
+
+    width: 1.2rem;
+    height: 1.2rem;
+
+    margin-right: 0.5rem;
+}
+
 
 .Tree__Node__name {
     user-select: none;

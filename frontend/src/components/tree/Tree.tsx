@@ -50,7 +50,7 @@ const Tree: React.FC<Props> = ({
 
     return (
         <div className={ classnames("Tree", {
-            [className]: className != ""
+            [className]: className !== ""
         }) }>
             { tree.map(node => makeNode(node)) }
         </div>

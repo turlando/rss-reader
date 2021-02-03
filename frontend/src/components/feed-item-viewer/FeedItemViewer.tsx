@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 
 import { selectSelectedItem } from '../../store/feed-slice';
 
-import './FeedItemViewer';
+import './FeedItemViewer.css';
 
 
 const FeedItemViewer: React.FC = () => {
@@ -11,7 +11,7 @@ const FeedItemViewer: React.FC = () => {
 
     return (
         <div className="FeedItemViewer">
-            { item && <p>{ item.description }</p> }
+            { item &&  item.description }
         </div>
     );
 }

@@ -30,6 +30,9 @@
     --feedbrowser-item-selected-background-color: #32353B;
     --feedbrowser-item-text-color: #CECFD1;
 
+    --feeditemviewer-background-color: #40444B;
+    --feeditemviewer-text-color: #DCDDDE;
+
     --subscriptions-editor-background-color: #313339;
 
     --dialog-background-color: #2F3136;
@@ -41,6 +44,11 @@
     --dialog-button-primary-background-color: #7289DA;
     --dialog-button-primary-hover-background-color: #677BC4;
     --dialog-button-primary-focus-background-color: #5B6EAE;
+
+    --toolbar-item-background-color: transparent;
+    --toolbar-item-hover-background-color: #31353A;
+    --toolbar-item-active-background-color: #31353A;
+    --toolbar-item-color: #B8BABD;
 
     --grid-gap: 0;
 }

@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import classnames from 'classnames';
 
 import { Folder } from '../../api';
+import Icon, {IconName} from '../icon';
 
 
 type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
@@ -36,10 +37,16 @@ const FolderNode: React.FC<Props> = ({
                 onClick={ onClick }
             >
                 <span
-                    className="Tree__Folder__caret"
+                    className="Tree__Node__icon"
                     onClick={ toggleOpen }
                 >
-                    { open ? "-" : "+" }
+                    { open
+                      ? <Icon icon={IconName.CaretDown} />
+                      : <Icon icon={IconName.CaretRight} />
+                    }
+                </span>
+                <span className="Tree__Node__icon">
+                    <Icon icon={IconName.Folder} />
                 </span>
                 <span className="Tree__Node__name">{ name }</span>
             </div>
