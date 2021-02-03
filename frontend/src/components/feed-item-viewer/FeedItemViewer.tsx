@@ -10,9 +10,10 @@ const FeedItemViewer: React.FC = () => {
     const item = useSelector(selectSelectedItem);
 
     return (
-        <div className="FeedItemViewer">
-            { item &&  item.description }
-        </div>
+        <div
+            className="FeedItemViewer"
+            dangerouslySetInnerHTML={ item && {__html: item.description} }
+        />
     );
 }
 

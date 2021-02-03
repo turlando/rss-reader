@@ -1,5 +1,7 @@
 import * as bcrypt from 'bcrypt'
 import RssParser from 'rss-parser'
+import DOMPurify from 'isomorphic-dompurify';
+
 import { Connection } from './db'
 import * as db from './db'
 
@@ -408,9 +410,9 @@ export function Item(
 
 
 function itemRowToItem(row: db.ItemRow) {
-    return Item(row.id, row.feed_id, row.guid,
-                row.title, row.description, row.link,
-                row.date)
+    return Item(row.id, row.feed_id, row.guid, row.title,
+                DOMPurify.sanitize(row.description),
+                row.link, row.date)
 }
 
 
