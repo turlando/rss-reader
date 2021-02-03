@@ -30,9 +30,11 @@ const Toolbar: React.FC = () => {
                 <Icon icon={IconName.FolderOpen} />
             </Item>
 
-            <Item onClick={ e => {
-                dispatch(setMode(Mode.Edit))
-            } }>
+            <Item
+                disabled={ selectedNode === undefined }
+                onClick={ e => {
+                    dispatch(setMode(Mode.Edit))
+                } }>
                 <Icon icon={IconName.Edit} />
             </Item>
 
