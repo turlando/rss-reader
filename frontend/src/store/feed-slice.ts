@@ -1,6 +1,6 @@
 import {PayloadAction, createSlice} from '@reduxjs/toolkit';
 import {AppThunk, RootState} from './store';
-import {ResultType, SubscriptionTreeFeed, Item, getFeedItems} from '../api';
+import {ResultType, SubscriptionTreeFeed, Item, getFeedItems, requestFeedUpdate} from '../api';
 
 
 interface Feed {
@@ -53,6 +53,16 @@ export const fetchFeed = (feed: SubscriptionTreeFeed): AppThunk => dispatch => {
             dispatch(setLoading(false));
         })
 };
+
+
+export const fetchFeedUpdate = (feed: SubscriptionTreeFeed): AppThunk => dispatch => {
+    dispatch(setLoading(true));
+    requestFeedUpdate(feed.id)
+        .then(() => {
+            dispatch(fetchFeed(feed));
+            dispatch(setLoading(false));
+        });
+}
 
 
 export const feedReducer = slice.reducer;

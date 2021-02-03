@@ -7,6 +7,7 @@ import { ReactComponent as Edit } from './create-outline.svg';
 import { ReactComponent as FolderOpen } from './folder-open-outline.svg';
 import { ReactComponent as Folder } from './folder-outline.svg';
 import { ReactComponent as Rss } from './logo-rss.svg';
+import { ReactComponent as Refresh } from './refresh-outline.svg';
 import { ReactComponent as Trash } from './trash-outline.svg';
 
 
@@ -21,6 +22,7 @@ export enum IconName {
     FolderOpen = "folder_open",
     Folder = "folder",
     Rss = "rss",
+    Refresh = "refresh",
     Trash = "trash",
 }
 
@@ -33,6 +35,7 @@ const ICON_NAME_TO_COMPONENT: Record<IconName, React.ReactElement> = {
     [IconName.FolderOpen]: <FolderOpen/>,
     [IconName.Folder]: <Folder/>,
     [IconName.Rss]: <Rss/>,
+    [IconName.Refresh]: <Refresh/>,
     [IconName.Trash]: <Trash/>,
 };
 

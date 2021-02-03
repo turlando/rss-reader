@@ -103,7 +103,7 @@ const Reader: React.FC = () => {
                       <DialogButtons>
                           <DialogButton
                               text="Remove"
-                              onClick={e => {
+                              onClick={ e => {
                                   if (selectedNode.type === SubscriptionTreeNodeType.Folder)
                                       return removeFolder(selectedNode.id)
                                           .then(() => {
@@ -124,10 +124,15 @@ const Reader: React.FC = () => {
                                               dispatch(fetchSubscriptions());
                                               dispatch(setMode(Mode.Normal));
                                           })
-                              }}
+                              } }
                               primary
                           />
-                          <DialogButton text="Cancel" />
+                          <DialogButton
+                              text="Cancel"
+                              onClick={ e => {
+                                  dispatch(setMode(Mode.Normal));
+                              }}
+                          />
                       </DialogButtons>
                   </Dialog>
                 }

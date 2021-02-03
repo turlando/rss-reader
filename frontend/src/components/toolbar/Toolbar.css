@@ -8,6 +8,7 @@
     align-items: center;
 }
 
+
 .Toolbar__Item {
     height: 2rem;
     width: 2rem;
@@ -19,7 +20,7 @@
     background-color: var(--toolbar-item-background-color);
 }
 
-.Toolbar__Item:hover {
+.Toolbar__Item:hover:enabled {
     background-color: var(--toolbar-item-hover-background-color);
 }
 

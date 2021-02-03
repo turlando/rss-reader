@@ -203,6 +203,11 @@ export const updateFeed = (feedId: number, title: string, folderId?: number) =>
     })
 
 
+export const requestFeedUpdate = (feedId: number) =>
+    axios.post(`${FEED_PATH}/${feedId}/update`)
+        .then(parseResponse)
+
+
 export const removeFeed = (feedId: number) =>
     axios.delete(`${FEED_PATH}/${feedId}`)
         .then(parseResponse);
