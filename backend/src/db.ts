@@ -344,11 +344,12 @@ export function getItemsByFeed(
 ): Promise<QueryResult<ItemRow>> {
     return query<ItemRow>(
         connection,
-        q("SELECT items.*",
-          "  FROM items, feeds",
-          " WHERE items.feed_id = feeds.id",
-          "   AND items.feed_id = $1",
-          "   AND feeds.user_id = $2"),
+        q("  SELECT items.*",
+          "    FROM items, feeds",
+          "   WHERE items.feed_id = feeds.id",
+          "     AND items.feed_id = $1",
+          "     AND feeds.user_id = $2",
+          "ORDER BY items.date DESC"),
         [feedId, userId]
     )
 }
