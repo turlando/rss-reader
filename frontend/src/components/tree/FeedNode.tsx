@@ -1,7 +1,7 @@
 import React from 'react';
 import classnames from 'classnames';
 
-import {Feed} from '../../api';
+import { Feed } from '../../api';
 
 
 type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
@@ -18,16 +18,16 @@ const FeedNode: React.FC<Props> = ({
     selected = false,
     onClick = (evt: OnClickEvent) => null
 }) => {
-    const {title} = feed;
+    const { title } = feed;
 
     return (
         <div
-            className={classnames("Tree__Feed Tree_item", {
+            className={ classnames("Tree__Feed Tree_item", {
                 "Tree__item--selected": selected,
-            })}
-            onClick={onClick}
+            }) }
+            onClick={ onClick }
         >
-            <span className="Tree__item__name">{title}</span>
+            <span className="Tree__item__name">{ title }</span>
         </div>
     );
 };

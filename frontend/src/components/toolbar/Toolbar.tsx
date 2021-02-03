@@ -1,7 +1,7 @@
 import React from 'react';
-import {useDispatch} from 'react-redux';
+import { useDispatch } from 'react-redux';
 
-import {Mode, setMode} from '../../store/reader-slice';
+import { Mode, setMode } from '../../store/reader-slice';
 
 import Item from './Item';
 
@@ -13,16 +13,16 @@ const Toolbar: React.FC = () => {
 
     return (
         <div className="Toolbar">
-            <Item onClick={e => dispatch(setMode(Mode.AddFolder))}>
+            <Item onClick={ e => dispatch(setMode(Mode.AddFolder)) }>
                 A
             </Item>
-            <Item onClick={e => dispatch(setMode(Mode.AddFeed))}>
+            <Item onClick={ e => dispatch(setMode(Mode.AddFeed)) }>
                 B
             </Item>
-            <Item onClick={e => dispatch(setMode(Mode.Edit))}>
+            <Item onClick={ e => dispatch(setMode(Mode.Edit)) }>
                 C
             </Item>
-            <Item onClick={e => dispatch(setMode(Mode.Delete))}>
+            <Item onClick={ e => dispatch(setMode(Mode.Delete)) }>
                 D
             </Item>
         </div>

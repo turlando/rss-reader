@@ -10,11 +10,11 @@ const Form: React.FC<Props> = ({
     onSubmit = () => null
 }) => {
     return (
-        <form onSubmit={e => {
+        <form onSubmit={ e => {
             e.preventDefault();
             onSubmit();
-        }}>
-            {children}
+        } }>
+            { children }
         </form>
     );
 }

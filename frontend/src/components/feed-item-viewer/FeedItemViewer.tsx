@@ -1,7 +1,9 @@
 import React from 'react';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
-import {selectSelectedItem} from '../../store/feed-slice';
+import { selectSelectedItem } from '../../store/feed-slice';
+
+import './FeedItemViewer';
 
 
 const FeedItemViewer: React.FC = () => {
@@ -9,7 +11,7 @@ const FeedItemViewer: React.FC = () => {
 
     return (
         <div className="FeedItemViewer">
-            {item && <p>{item.description}</p>}
+            { item && <p>{ item.description }</p> }
         </div>
     );
 }

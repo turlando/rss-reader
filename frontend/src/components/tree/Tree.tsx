@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {
-    SubscriptionTree, SubscriptionTreeNode, SubscriptionTreeNodeType,
-    treeNodeKey
+    SubscriptionTree, SubscriptionTreeNode, SubscriptionTreeNodeType
 } from '../../api';
 
 import FolderNode from './FolderNode';
@@ -35,6 +34,10 @@ function isSelected(
 }
 
 
+const treeNodeKey = (node: SubscriptionTreeNode): string =>
+    `${node.type}-${node.id}`;
+
+
 const Tree: React.FC<Props> = ({
     tree,
     selectedNode = undefined,
@@ -44,7 +47,7 @@ const Tree: React.FC<Props> = ({
 
     return (
         <div className="Tree">
-            {tree.map(node => makeNode(node))}
+            { tree.map(node => makeNode(node)) }
         </div>
     );
 };
@@ -60,10 +63,10 @@ const nodeMaker = (
     ) {
         return (
             <FolderNode
-                key={treeNodeKey(node)}
-                folder={node}
-                selected={isSelected(node, selectedNode)}
-                onClick={evt => onClick(evt, node)}
+                key={ treeNodeKey(node) }
+                folder={ node }
+                selected={ isSelected(node, selectedNode) }
+                onClick={ evt => onClick(evt, node) }
             />
         );
     }
@@ -74,12 +77,12 @@ const nodeMaker = (
     ) {
         return (
             <FolderNode
-                key={treeNodeKey(node)}
-                folder={node}
-                selected={isSelected(node, selectedNode)}
-                onClick={evt => onClick(evt, node)}
+                key={ treeNodeKey(node) }
+                folder={ node }
+                selected={ isSelected(node, selectedNode) }
+                onClick={ evt => onClick(evt, node) }
             >
-                {node.children.map(child => fn(child))}
+                { node.children.map(child => fn(child)) }
             </FolderNode>
         );
     }
@@ -87,10 +90,10 @@ const nodeMaker = (
     if (node.type === SubscriptionTreeNodeType.Feed)
         return (
             <FeedNode
-                key={treeNodeKey(node)}
-                feed={node}
-                selected={isSelected(node, selectedNode)}
-                onClick={evt => onClick(evt, node)}
+                key={ treeNodeKey(node) }
+                feed={ node }
+                selected={ isSelected(node, selectedNode) }
+                onClick={ evt => onClick(evt, node) }
             />
         );
 };

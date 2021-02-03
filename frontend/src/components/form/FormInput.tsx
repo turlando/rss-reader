@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 
 interface Props {
@@ -21,12 +22,14 @@ const FormInput: React.FC<Props> = ({
 }) => {
     return (
         <input
-            className={className}
-            type={type}
-            name={name}
-            placeholder={placeholder}
-            value={value}
-            onChange={e => setValue(e.target.value)}
+            className={ classnames("Form__Input", {
+                [className]: className !== "",
+            }) }
+            type={ type }
+            name={ name }
+            placeholder={ placeholder }
+            value={ value }
+            onChange={ e => setValue(e.target.value) }
         />
     );
 }

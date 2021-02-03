@@ -1,4 +1,5 @@
 import React from 'react';
+import classnames from 'classnames';
 
 
 interface Props {
@@ -14,9 +15,11 @@ const SubmitButton: React.FC<Props> = ({
 }) => {
     return (
         <input
-            className={className}
+            className={ classnames("Form__Submit", {
+                [className]: className !== "",
+            })}
             type="submit"
-            name={name}
+            name={ name }
         />
     );
 }

@@ -21,9 +21,9 @@ const DialogButton: React.FC<Props> = ({
             className={classnames("Dialog__Button", {
                 "Dialog__Button--primary": primary
             })}
-            onClick={onClick}
+            onClick={ onClick }
         >
-            {text}
+            { text }
         </button>
     );
 }

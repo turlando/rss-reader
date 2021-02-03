@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
-import {useSelector} from 'react-redux';
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
 
 import {
     SubscriptionTreeFeed, SubscriptionTreeNodeType,
     addFeed, updateFeed
 } from '../../api';
-import {selectSubscriptions} from '../../store/subscriptions-slice';
+import { selectSubscriptions } from '../../store/subscriptions-slice';
 
-import {Form, FormInput, FormSubmit} from '../form';
+import { Form, FormInput, FormSubmit } from '../form';
 import Tree, {SelectedNode} from '../tree';
 
 
@@ -37,35 +37,35 @@ const FeedForm: React.FC<Props> = ({
     const subscriptions = useSelector(selectSubscriptions);
 
     return (
-        <Form onSubmit={() => {
+        <Form onSubmit={ () => {
             if (feed === undefined)
                 return addFeed(url, name, parent).then(res => onDone())
             return updateFeed(feed.id, name, parent).then(res => onDone())
-        }}>
+        } }>
             <FormInput
                 type="text"
                 name="name"
                 placeholder="Name"
-                value={name}
-                setValue={setName}
+                value={ name }
+                setValue={ setName }
             />
 
             <FormInput
                 type="text"
                 name="url"
                 placeholder="URL"
-                value={url}
-                setValue={setUrl}
+                value={ url }
+                setValue={ setUrl }
             />
 
             <Tree
-                tree={subscriptions}
-                selectedNode={selectedNode}
-                onClick={(e, f) => {
+                tree={ subscriptions }
+                selectedNode={ selectedNode }
+                onClick={ (e, f) => {
                     e.stopPropagation();
                     setSelectedNode(f);
                     setParent(f.id);
-                }}
+                } }
             />
 
             <FormSubmit/>

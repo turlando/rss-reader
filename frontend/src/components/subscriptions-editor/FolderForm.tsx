@@ -36,27 +36,27 @@ const FolderForm: React.FC<Props> = ({
     const subscriptions = useSelector(selectSubscriptions);
 
     return (
-        <Form onSubmit={() => {
+        <Form onSubmit={ () => {
             if (folder === undefined)
                 return addFolder(name, parent).then(res => onDone());
             return updateFolder(folder.id, name, parent).then(res => onDone());
-        }}>
+        } }>
             <FormInput
                 type="text"
                 name="name"
                 placeholder="Name"
-                value={name}
-                setValue={setName}
+                value={ name }
+                setValue={ setName }
             />
 
             <Tree
-                tree={subscriptions}
-                selectedNode={selectedNode}
-                onClick={(e, f) => {
+                tree={ subscriptions }
+                selectedNode={ selectedNode }
+                onClick={ (e, f) => {
                     e.stopPropagation();
                     setSelectedNode(f);
                     setParent(f.id);
-                }}
+                } }
             />
 
             <FormSubmit/>

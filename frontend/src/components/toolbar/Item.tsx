@@ -15,9 +15,9 @@ const Item: React.FC<Props> = ({
     return (
         <div
             className="Toolbar__Item"
-            onClick={onClick}
+            onClick={ onClick }
         >
-            {children}
+            { children }
         </div>
     );
 }

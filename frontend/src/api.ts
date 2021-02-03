@@ -108,9 +108,8 @@ export type SubscriptionTreeNode   = SubscriptionTreeFolder | SubscriptionTreeFe
 export type SubscriptionTree       = SubscriptionTreeNode[]
 
 
-export const treeNodeKey = (node: SubscriptionTreeNode): string => {
-    return `${node.type}-${node.id}`;
-}
+export const treeNodeKey = (node: SubscriptionTreeNode): string =>
+    `${node.type}-${node.id}`;
 
 
 /* API helpers ***************************************************************/

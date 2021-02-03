@@ -1,10 +1,10 @@
 import React from 'react';
 
 
-const DialogButtons: React.FC = ({children}) => {
+const DialogButtons: React.FC = ({ children }) => {
     return (
         <div className="Dialog__Buttons">
-            {children}
+            { children }
         </div>
     );
 }

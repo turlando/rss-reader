@@ -1,10 +1,10 @@
 import React from 'react';
 
 
-const DialogText: React.FC = ({children}) => {
+const DialogText: React.FC = ({ children }) => {
     return (
         <div className="Dialog__Text">
-            {children}
+            { children }
         </div>
     );
 }

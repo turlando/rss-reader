@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import classnames from 'classnames';
 
-import {Folder} from '../../api';
+import { Folder } from '../../api';
 
 
 type OnClickEvent = React.MouseEvent<HTMLDivElement, MouseEvent>;
@@ -20,7 +20,7 @@ const FolderNode: React.FC<Props> = ({
     onClick = (evt: OnClickEvent) => null
 }) => {
     const [open, setOpen] = useState(true);
-    const {name} = folder;
+    const { name } = folder;
 
     const toggleOpen = (evt: OnClickEvent) => {
         evt.stopPropagation();
@@ -30,23 +30,23 @@ const FolderNode: React.FC<Props> = ({
     return (
         <div className="Tree__Folder">
             <div
-                className={classnames("Tree__item", {
+                className={ classnames("Tree__item", {
                     "Tree__item--selected": selected
-                })}
-                onClick={onClick}
+                }) }
+                onClick={ onClick }
             >
                 <span
                     className="Tree__item__caret"
-                    onClick={toggleOpen}
+                    onClick={ toggleOpen }
                 >
-                    {open ? "-" : "+"}
+                    { open ? "-" : "+" }
                 </span>
-                <span className="Tree__item__name">{name}</span>
+                <span className="Tree__item__name">{ name }</span>
             </div>
 
           { children && open &&
             <div className="Tree__Folder__children">
-                {children}
+                { children }
             </div>
           }
         </div>

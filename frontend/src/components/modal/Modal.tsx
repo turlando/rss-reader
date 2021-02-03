@@ -23,13 +23,13 @@ const Modal: React.FC<Props> = ({
             className={classnames("Modal__container", {
                 "Modal__container--blur": blur
             })}
-            onClick={onClick}
+            onClick={ onClick }
         >
             <div
                 className="Modal__content"
-                onClick={e => e.stopPropagation()}
+                onClick={ e => e.stopPropagation() }
             >
-                {children}
+                { children }
             </div>
         </div>
     )
