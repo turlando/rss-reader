@@ -54,6 +54,7 @@ const FeedForm: React.FC<Props> = ({
                 type="text"
                 name="url"
                 placeholder="URL"
+                disabled={ feed !== undefined }
                 value={ url }
                 setValue={ setUrl }
             />

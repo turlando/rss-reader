@@ -8,4 +8,6 @@
     color: var(--feeditemviewer-text-color);
 
     font-size: 14pt;
+
+    overflow-y: auto;
 }

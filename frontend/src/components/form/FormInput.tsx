@@ -7,6 +7,7 @@ interface Props {
     type?: string;
     name?: string;
     placeholder?: string;
+    disabled?: boolean;
     value?: string;
     setValue?: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -17,6 +18,7 @@ const FormInput: React.FC<Props> = ({
     type = "",
     name = "",
     placeholder = "",
+    disabled = false,
     value = "",
     setValue = () => null
 }) => {
@@ -28,6 +30,7 @@ const FormInput: React.FC<Props> = ({
             type={ type }
             name={ name }
             placeholder={ placeholder }
+            disabled={ disabled }
             value={ value }
             onChange={ e => setValue(e.target.value) }
         />

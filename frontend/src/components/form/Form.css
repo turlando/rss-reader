@@ -40,6 +40,8 @@
 
     background-color: var(--form-submit-background-color);
     color: var(--form-submit-text-color);
+
+    font-weight: bold;
 }
 
 

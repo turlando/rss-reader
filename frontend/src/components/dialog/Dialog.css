@@ -26,8 +26,6 @@
 
     background-color: transparent;
     color: var(--dialog-button-text-color);
-
-    font-weight: bold;
 }
 
 .Dialog__Button:hover {
@@ -41,6 +39,7 @@
 
 .Dialog__Button--primary {
     background-color: var(--dialog-button-primary-background-color);
+    font-weight: bold;
 }
 
 .Dialog__Button--primary:focus {

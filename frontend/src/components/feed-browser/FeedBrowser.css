@@ -7,11 +7,13 @@
     display: grid;
 
     grid-template-areas: "title date";
-    grid-template-columns: 1fr 9rem;
+    grid-template-columns: 1fr 10rem;
 
     padding: 0.15rem 0.5rem 0.15rem 0.5rem;
 
     color: var(--feedbrowser-item-text-color);
+
+    user-select: none;
 }
 
 
