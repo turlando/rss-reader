@@ -17,9 +17,9 @@ interface Props {
 }
 
 
-function selectFolder(node: SubscriptionTreeFeed): SelectedNode {
+function selectNode(node: SubscriptionTreeFeed): SelectedNode {
     return {
-        type: SubscriptionTreeNodeType.Feed,
+        type: SubscriptionTreeNodeType.Folder,
         id: node.folderId,
     }
 }
@@ -33,7 +33,7 @@ const FeedForm: React.FC<Props> = ({
     const [url, setUrl] = useState(feed?.url || "");
     const [parent, setParent] = useState<number | undefined>(feed?.folderId);
     const [selectedNode, setSelectedNode] =
-        useState<SelectedNode | undefined>(feed ? selectFolder(feed) : undefined);
+        useState<SelectedNode | undefined>(feed ? selectNode(feed) : undefined);
     const subscriptions = useSelector(selectSubscriptions);
 
     return (
@@ -64,6 +64,9 @@ const FeedForm: React.FC<Props> = ({
                 selectedNode={ selectedNode }
                 onClick={ (e, f) => {
                     e.stopPropagation();
+
+                    if (f.type === SubscriptionTreeNodeType.Feed)
+                        return;
 
                     if (f.id === selectedNode?.id) {
                         setSelectedNode(undefined);

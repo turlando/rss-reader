@@ -17,10 +17,10 @@ interface Props {
 }
 
 
-function selectParent(node: SubscriptionTreeFolder): SelectedNode {
+function selectNode(node: SubscriptionTreeFolder): SelectedNode {
     return {
         type: SubscriptionTreeNodeType.Folder,
-        id: node.parentFolderId,
+        id: node.id,
     }
 }
 
@@ -32,7 +32,7 @@ const FolderForm: React.FC<Props> = ({
     const [name, setName] = useState(folder?.name || "");
     const [parent, setParent] = useState<number | undefined>(folder?.parentFolderId);
     const [selectedNode, setSelectedNode] =
-        useState<SelectedNode | undefined>(folder ? selectParent(folder) : undefined);
+        useState<SelectedNode | undefined>(folder ? selectNode(folder) : undefined);
     const subscriptions = useSelector(selectSubscriptions);
 
     return (
