@@ -1,6 +1,5 @@
-import Axios, {AxiosResponse} from 'axios';
-
-import {store} from './store/store';
+import Axios, { AxiosResponse } from 'axios';
+import { store } from './store/store';
 
 
 /* Constants ******************************************************************/
@@ -9,6 +8,7 @@ const BACKEND_URL = 'http://localhost:8000';
 const SESSION_PATH = "session";
 const SUBSCRIPTIONS_PATH = "subscriptions";
 const FOLDER_PATH = "folder";
+const FEED_PATH = "feed";
 
 
 /* Result types ***************************************************************/
@@ -153,71 +153,66 @@ axios.interceptors.request.use(
 );
 
 
-/* API requests **************************************************************/
+/* Session API calls *********************************************************/
 
-export const login = (username: string, password: string) => {
-    return axios.post<Session>(SESSION_PATH, {username, password})
+export const login = (username: string, password: string) =>
+    axios.post<Session>(SESSION_PATH, {username, password})
         .then(parseResponse);
-};
 
 
-export const getSubscriptions = () => {
-    return axios.get<SubscriptionTree>(SUBSCRIPTIONS_PATH)
+/* Subscriptions API calls ***************************************************/
+
+export const getSubscriptions = () =>
+    axios.get<SubscriptionTree>(SUBSCRIPTIONS_PATH)
         .then(parseResponse);
-}
 
 
-export const addFolder = (name: string, parent: number | undefined) => {
-    // TODO: clean this mess
-    return axios.post(FOLDER_PATH, {
+/* Folder API calls **********************************************************/
+
+export const addFolder = (name: string, parent?: number) =>
+    axios.post<Folder>(FOLDER_PATH, {
         name,
-        parent: parent === undefined ? null : parent
+        parent: parent || null,
     })
         .then(parseResponse);
-}
 
 
-export const updateFolder = (folderId: number, name: string, parent: number | undefined) => {
-    return axios.put(`${FOLDER_PATH}/${folderId}`, {
+export const updateFolder = (folderId: number, name: string, parent?: number) =>
+    axios.put<Folder>(`${FOLDER_PATH}/${folderId}`, {
         name: name,
-        parent: parent === undefined ? null : parent
+        parent: parent || null,
     })
         .then(parseResponse)
-}
 
 
-export const removeFolder = (folderId: number) => {
-    return axios.delete(`${FOLDER_PATH}/${folderId}`)
+export const removeFolder = (folderId: number) =>
+    axios.delete(`${FOLDER_PATH}/${folderId}`)
         .then(parseResponse);
-}
 
 
-export const getFeedItems = (feedId: number) => {
-    return axios.get(`/feed/${feedId}/items`)
-        .then(parseResponse);
-}
+/* Feed API calls ************************************************************/
 
-
-export const addFeed = (url: string, title?: string, folderId?: number) => {
-    return axios.post(`/feed`, {
-        // TODO: clean this mess
+export const addFeed = (url: string, title?: string, folderId?: number) =>
+    axios.post<Feed>(FEED_PATH, {
         url,
-        title: title === undefined ? null : title,
-        folder: folderId === undefined ? null : folderId
+        title: title || null,
+        folder: folderId || null,
     })
         .then(parseResponse)
-}
 
 
-export const updateFeed = (feedId: number, title: string, folderId?: number) => {
-    return axios.put(`/feed/${feedId}`, {
+export const updateFeed = (feedId: number, title: string, folderId?: number) =>
+    axios.put(`${FEED_PATH}/${feedId}`, {
         title,
-        folder: folderId === undefined ? null : folderId
+        folder: folderId || null,
     })
-}
 
 
-export const removeFeed = (feedId: number) => {
-    return axios.delete(`/feed/${feedId}`)
+export const removeFeed = (feedId: number) =>
+    axios.delete(`${FEED_PATH}/${feedId}`)
         .then(parseResponse);
-}
+
+
+export const getFeedItems = (feedId: number) =>
+    axios.get<Item[]>(`${FEED_PATH}/${feedId}/items`)
+        .then(parseResponse);

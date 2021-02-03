@@ -3,7 +3,7 @@ import {useSelector} from 'react-redux';
 
 import {
     SubscriptionTreeFeed, SubscriptionTreeNodeType,
-    addFeed, addFolder, updateFeed
+    addFeed, updateFeed
 } from '../../api';
 import {selectSubscriptions} from '../../store/subscriptions-slice';
 
@@ -33,7 +33,7 @@ const FeedForm: React.FC<Props> = ({
     const [url, setUrl] = useState(feed?.url || "");
     const [parent, setParent] = useState<number | undefined>(feed?.folderId);
     const [selectedNode, setSelectedNode] =
-        useState<SelectedNode | undefined>(undefined);
+        useState<SelectedNode | undefined>(feed ? selectFolder(feed) : undefined);
     const subscriptions = useSelector(selectSubscriptions);
 
     return (

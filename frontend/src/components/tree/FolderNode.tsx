@@ -20,7 +20,7 @@ const FolderNode: React.FC<Props> = ({
     onClick = (evt: OnClickEvent) => null
 }) => {
     const [open, setOpen] = useState(true);
-    const {id, name} = folder;
+    const {name} = folder;
 
     const toggleOpen = (evt: OnClickEvent) => {
         evt.stopPropagation();

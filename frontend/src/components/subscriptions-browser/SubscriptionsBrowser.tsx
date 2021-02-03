@@ -1,14 +1,17 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import {SubscriptionTreeNode, SubscriptionTreeNodeType} from '../../api';
-import {selectSubscriptions, fetchSubscriptions, selectSelectedNode, setSelectedNode} from '../../store/subscriptions-slice';
+import { SubscriptionTreeNodeType } from '../../api';
+import { fetchFeed } from '../../store/feed-slice';
+import {
+    selectSubscriptions, fetchSubscriptions,
+    selectSelectedNode, setSelectedNode
+} from '../../store/subscriptions-slice';
 
 import Toolbar from '../toolbar';
 import Tree from '../tree';
 
 import './SubscriptionsBrowser.css';
-import { fetchFeed } from '../../store/feed-slice';
 
 
 const SubscriptionsBrowser: React.FC = () => {

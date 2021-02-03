@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch} from 'react-redux';
 
-import {Item} from '../../api';
 import {selectItems, setSelectedItem} from '../../store/feed-slice';
 
 import FeedItem from './FeedItem';
