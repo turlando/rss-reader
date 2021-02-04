@@ -155,6 +155,11 @@ export const login = (username: string, password: string) =>
         .then(parseResponse);
 
 
+export const logout = () =>
+    axios.delete(SESSION_PATH)
+        .then(parseResponse)
+
+
 /* Subscriptions API calls ***************************************************/
 
 export const getSubscriptions = () =>

@@ -11,7 +11,7 @@ const storeToken = (token: string) => {
     localStorage.setItem('token', token)
 }
 
-const removeToken = () => {
+const unstoreToken = () => {
     localStorage.removeItem('token')
 }
 
@@ -38,7 +38,13 @@ const slice = createSlice({
 
             // FIXME: side effects should be in a middleware
             storeToken(payload);
-        }
+        },
+        removeToken: (state, action: PayloadAction<void>) => {
+            state.token = undefined;
+
+            // FIXME: side effects should be in a middleware
+            unstoreToken();
+        },
     }
 });
 
@@ -48,4 +54,4 @@ export const sessionPreloadedState = preloadedState;
 
 export const selectToken = (state: RootState) => state.session.token;
 
-export const {setToken} = slice.actions;
+export const { setToken, removeToken } = slice.actions;
