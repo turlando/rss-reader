@@ -1,30 +1,30 @@
-.Login__backdrop {
+.Signup__backdrop {
     width: 100vw;
     height: 100vh;
-    background-color: var(--login-backdrop-background-color);
+    background-color: var(--signup-backdrop-background-color);
 }
 
 
-.Login {
+.Signup {
     width: 300px;
     padding: 1.5rem;
     background: var(--dialog-background-color);
 }
 
 
-.Login__error {
+.Signup__error {
     display: flex;
     width: 100%;
     padding: 0.5rem 1rem 0.5rem 1rem;
     align-items: center;
-    background: var(--login-error-background-color);
-    color: var(--login-error-text-color);
+    background: var(--signup-error-background-color);
+    color: var(--signup-error-text-color);
 }
 
 
-.Login__signup-link {
+.Signup__login-link {
     display: block;
     margin-top: 0.5rem;
     text-align: center;
-    color: var(--login-signup-link-color);
+    color: var(--signup-login-link-color);
 }

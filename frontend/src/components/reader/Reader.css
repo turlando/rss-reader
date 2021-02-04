@@ -16,19 +16,20 @@
 
     grid-template-columns: 22rem 1fr;
     grid-template-rows: 2fr 3fr;
-
-    gap: var(--grid-gap);
 }
+
 
 .Reader__SubscriptionsBrowser {
     grid-area: subscriptions-browser;
     overflow-y: auto;
 }
 
+
 .Reader__FeedBrowser {
     grid-area: feed-browser;
     overflow-y: auto;
 }
+
 
 .Reader__ItemViewer {
     grid-area: item-viewer;

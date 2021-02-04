@@ -8,7 +8,6 @@
         "tree"
         "toolbar";
     grid-template-rows: 1fr 3rem;
-    gap: var(--grid-gap);
 }
 
 .SubscriptionsBrowser__Tree {

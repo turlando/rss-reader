@@ -31,7 +31,7 @@ const LoginForm: React.FC<Props> = ({
                 setValue={ setPassword }
             />
 
-            <FormSubmit className="Login__element"/>
+            <FormSubmit text="Log in" />
         </Form>
     );
 }

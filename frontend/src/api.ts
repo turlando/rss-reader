@@ -5,6 +5,7 @@ import { store } from './store/store';
 /* Constants ******************************************************************/
 
 const BACKEND_URL = 'http://localhost:8000';
+const USER_PATH = "user";
 const SESSION_PATH = "session";
 const SUBSCRIPTIONS_PATH = "subscriptions";
 const FOLDER_PATH = "folder";
@@ -146,6 +147,13 @@ axios.interceptors.request.use(
         return Promise.reject(err);
     }
 );
+
+
+/* User API calls ************************************************************/
+
+export const signup = (username: string, password: string) =>
+    axios.post(USER_PATH, {username, password})
+        .then(parseResponse);
 
 
 /* Session API calls *********************************************************/

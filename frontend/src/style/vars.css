@@ -1,6 +1,30 @@
 :root {
-    --background-color: #36393F;
 
+/* Login *********************************************************************/
+
+    --login-backdrop-background-color: #36393F;
+
+    --login-dialog-background-color: #2F3136;
+
+    --login-error-background-color: #E44545;
+    --login-error-text-color: #F4F5FB;
+
+    --login-signup-link-color: #F4F5FB;
+
+
+/* Signup ********************************************************************/
+
+    --signup-backdrop-background-color: #36393F;
+
+    --signup-dialog-background-color: #2F3136;
+
+    --signup-error-background-color: #E44545;
+    --signup-error-text-color: #F4F5FB;
+
+    --signup-login-link-color: #F4F5FB;
+
+
+/* Form **********************************************************************/
 
     --form-input-background-color: #313339;
 
@@ -16,6 +40,9 @@
     --form-submit-focus-background-color: #5B6EAE;
     --form-submit-text-color: #F4F5FB;
 
+
+/* Subscriptions tree ********************************************************/
+
     --subscriptions-tree-background-color: #2F3136;
     --subscriptions-toolbar-background-color: #292B2F;
 
@@ -24,6 +51,8 @@
     --subscriptions-tree-node-selected-text-color: #FFFFFF;
     --subscriptions-tree-node-hover-background-color: #393C42;
     --subscriptions-tree-node-selected-background-color: #393C42;
+
+/* Feed browser **************************************************************/
 
     --feedbrowser-background-color: #36393F;
     --feedbrowser-item-hover-background-color: #32353B;
@@ -35,20 +64,29 @@
 
     --subscriptions-editor-background-color: #313339;
 
+
+/* Dialog ********************************************************************/
+
     --dialog-background-color: #2F3136;
+
     --dialog-text-color: #CECFD1;
+
     --dialog-button-text-color: #CECFD0;
     --dialog-button-background-color: transparent;
     --dialog-button-hover-background-color: transparent;
     --dialog-button-focus-background-color: transparent;
+
     --dialog-button-primary-background-color: #7289DA;
     --dialog-button-primary-hover-background-color: #677BC4;
     --dialog-button-primary-focus-background-color: #5B6EAE;
 
+
+/* Toolbar *******************************************************************/
+
     --toolbar-item-background-color: transparent;
+
     --toolbar-item-hover-background-color: #31353A;
     --toolbar-item-active-background-color: #31353A;
     --toolbar-item-color: #B8BABD;
 
-    --grid-gap: 0;
 }

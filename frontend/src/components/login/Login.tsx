@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+import { Link } from 'react-router-dom';
+
 import { ResultType, login } from '../../api';
 import { setToken } from '../../store/session-slice';
 
@@ -24,17 +26,26 @@ const Login = () => {
             });
 
     return (
-        <Modal>
-            <div className="Login">
-                <LoginForm handleLogin={handleLogin} />
+        <div className="Login__backdrop">
+            <Modal>
+                <div className="Login">
+                    <LoginForm handleLogin={handleLogin} />
 
-                { error !== "" &&
-                  <div className="Login__element Login__error">
-                      { error }
-                  </div>
-                }
-            </div>
-        </Modal>
+                    { error !== "" &&
+                    <div className="Login__error">
+                        { error }
+                    </div>
+                    }
+
+                    <Link
+                        className="Login__signup-link"
+                        to="/signup"
+                    >
+                        Or signup
+                    </Link>
+                </div>
+            </Modal>
+        </div>
     )
 }
 
