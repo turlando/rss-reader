@@ -20,7 +20,7 @@ interface Props {
 function selectNode(node: SubscriptionTreeFolder): SelectedNode {
     return {
         type: SubscriptionTreeNodeType.Folder,
-        id: node.id,
+        id: node.parentFolderId,
     }
 }
 
