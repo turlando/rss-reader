@@ -26,15 +26,15 @@ const SubscriptionsBrowser: React.FC = () => {
     return (
         <div className="SubscriptionsBrowser">
             <div className="SubscriptionsBrowser__Tree">
-            <Tree
-                tree={ subscriptions }
-                selectedNode={ selectedNode }
-                onClick={ (e, f) => {
-                    dispatch(setSelectedNode(f));
-                    if (f.type === SubscriptionTreeNodeType.Feed)
-                        dispatch(fetchFeed(f));
-                } }
-            />
+                <Tree
+                    tree={ subscriptions }
+                    selectedNode={ selectedNode }
+                    onClick={ (e, f) => {
+                        dispatch(setSelectedNode(f));
+                        if (f.type === SubscriptionTreeNodeType.Feed)
+                            dispatch(fetchFeed(f));
+                    } }
+                />
             </div>
             <div className="SubscriptionsBrowser__Toolbar">
                 <Toolbar/>

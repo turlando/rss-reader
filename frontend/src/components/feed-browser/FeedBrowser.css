@@ -3,6 +3,8 @@
     height: 100%;
 
     background-color: var(--feedbrowser-background-color);
+
+    overflow-y: auto;
 }
 
 

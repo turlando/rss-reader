@@ -1,17 +1,32 @@
 import React from 'react';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import {removeFolder, SubscriptionTreeNodeType, removeFeed} from '../../api';
-import {Mode, selectMode, setMode} from '../../store/reader-slice';
-import {fetchSubscriptions, selectSelectedNode, setSelectedNode} from '../../store/subscriptions-slice';
-import {setFeed, setItems, setSelectedItem} from '../../store/feed-slice';
+import {
+    SubscriptionTreeNodeType,
+    removeFolder, removeFeed
+} from '../../api';
+
+import {
+    Mode,
+    selectMode, setMode
+} from '../../store/reader-slice';
+
+import {
+    fetchSubscriptions,
+    selectSelectedNode, setSelectedNode
+} from '../../store/subscriptions-slice';
+
+import {
+    setFeed,
+    setItems, setSelectedItem
+} from '../../store/feed-slice';
 
 import Modal from '../modal';
-import {Dialog, DialogText, DialogButtons, DialogButton} from '../dialog';
+import { Dialog, DialogText, DialogButtons, DialogButton } from '../dialog';
 import SubscriptionsBrowser from '../subscriptions-browser';
 import FeedBrowser from '../feed-browser';
 import FeedItemViewer from '../feed-item-viewer';
-import SubscriptionsEditor, {FolderForm, FeedForm} from '../subscriptions-editor';
+import SubscriptionsEditor, { FolderForm, FeedForm } from '../subscriptions-editor';
 
 import './Reader.css';
 

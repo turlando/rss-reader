@@ -1,5 +1,6 @@
 import React from 'react';
 
+// Icons from https://ionicons.com/
 import { ReactComponent as Add } from './add-circle-outline.svg';
 import { ReactComponent as CaretDown } from './caret-down-outline.svg';
 import { ReactComponent as CaretRight } from './caret-forward-outline.svg';
@@ -10,9 +11,6 @@ import { ReactComponent as LogOut } from './log-out-outline.svg';
 import { ReactComponent as Rss } from './logo-rss.svg';
 import { ReactComponent as Refresh } from './refresh-outline.svg';
 import { ReactComponent as Trash } from './trash-outline.svg';
-
-
-// Icon from https://ionicons.com/
 
 
 export enum IconName {

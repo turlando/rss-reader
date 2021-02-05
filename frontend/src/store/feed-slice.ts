@@ -1,6 +1,10 @@
-import {PayloadAction, createSlice} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
-import {ResultType, SubscriptionTreeFeed, Item, getFeedItems, requestFeedUpdate} from '../api';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+
+import { AppThunk, RootState } from './store';
+import {
+    ResultType, SubscriptionTreeFeed, Item,
+    getFeedItems, requestFeedUpdate
+} from '../api';
 
 
 interface Feed {

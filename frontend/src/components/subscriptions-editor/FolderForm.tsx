@@ -66,7 +66,11 @@ const FolderForm: React.FC<Props> = ({
                 } }
             />
 
-            <FormSubmit/>
+            <FormSubmit
+                text={ folder === undefined
+                       ? "Add folder"
+                       : "Edit folder" }
+            />
         </Form>
     );
 }

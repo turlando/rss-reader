@@ -17,7 +17,7 @@ const FeedBrowser: React.FC = () => {
         <div className="FeedBrowser">
             { items.map(i =>
                   <FeedItem
-                      key={i.id}
+                      key={ i.id }
                       item={ i }
                       selected={ i.id === selectedItem?.id }
                       onClick={ (evt, item) => {

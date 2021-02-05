@@ -8,7 +8,7 @@ import {
 import { selectSubscriptions } from '../../store/subscriptions-slice';
 
 import { Form, FormInput, FormSubmit } from '../form';
-import Tree, {SelectedNode} from '../tree';
+import Tree, { SelectedNode } from '../tree';
 
 
 interface Props {
@@ -79,7 +79,11 @@ const FeedForm: React.FC<Props> = ({
                 } }
             />
 
-            <FormSubmit/>
+            <FormSubmit
+                text={ feed === undefined
+                       ? "Add feed"
+                       : "Edit feed" }
+            />
         </Form>
     );
 }

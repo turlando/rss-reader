@@ -51,7 +51,7 @@ const Signup = () => {
                     <SignupForm handleSignup={handleSignup} />
 
                     { error !== "" &&
-                    <div className="Signup__element Signup__error">
+                    <div className="Signup__error">
                         { error }
                     </div>
                     }

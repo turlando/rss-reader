@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS sessions (
     user_id  INTEGER      REFERENCES users (id)
   , token    TEXT         UNIQUE                  NOT NULL
   , date     TIMESTAMPTZ  UNIQUE                  NOT NULL
+  , PRIMARY KEY (user_id, token)
 );
 
 CREATE TABLE IF NOT EXISTS folders (

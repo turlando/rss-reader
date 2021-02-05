@@ -1,6 +1,10 @@
-import {PayloadAction, createSlice} from '@reduxjs/toolkit';
-import {AppThunk, RootState} from './store';
-import {SubscriptionTreeNode, ResultType, SubscriptionTree, getSubscriptions} from '../api';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+
+import { AppThunk, RootState } from './store';
+import {
+    SubscriptionTreeNode, ResultType, SubscriptionTree,
+    getSubscriptions
+} from '../api';
 
 
 interface Subscriptions {

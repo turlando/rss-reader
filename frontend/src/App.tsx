@@ -1,8 +1,8 @@
 import React from 'react';
-import {BrowserRouter, Route, Redirect} from 'react-router-dom';
-import {useSelector} from 'react-redux';
+import { BrowserRouter, Route, Redirect } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
-import {selectToken} from './store/session-slice';
+import { selectToken } from './store/session-slice';
 
 import Login from './components/login';
 import Signup from './components/signup';
